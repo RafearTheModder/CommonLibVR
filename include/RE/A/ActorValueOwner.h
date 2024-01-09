@@ -23,6 +23,7 @@ namespace RE
 
 		[[nodiscard]] float GetArmorRatingSkillMultiplier(float a_skillLevel) const;
 		[[nodiscard]] float GetClampedActorValue(ActorValue a_akValue) const;
+		[[nodiscard]] float GetDualCastingEffectiveness(float a_cost) const;
 
 	private:
 		KEEP_FOR_RE()
