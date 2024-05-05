@@ -23,6 +23,7 @@
 #include <format>
 #include <fstream>
 #include <functional>
+#include <intrin.h>
 #include <iomanip>
 #include <ios>
 #include <istream>
@@ -60,8 +61,6 @@ static_assert(
 
 #pragma warning(push)
 #include <binary_io/file_stream.hpp>
-#include <boost/stl_interfaces/iterator_interface.hpp>
-#include <fmt/format.h>
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 
@@ -601,7 +600,7 @@ namespace SKSE
 				}
 
 				return utf8_to_utf16(
-					fmt::format(
+					std::format(
 						"{}({}): {}"sv,
 						filename,
 						a_loc.line(),
@@ -715,7 +714,7 @@ namespace REL
 #	define RELOCATION_ID(SE, AE) REL::ID(SE)
 #endif
 
-#include "REL/Relocation.h"
+#include "REL/REL.h"
 
 #ifdef _DEBUG
 // Generates a concrete function to force the class to be included in the PDB when loading types from PDB for IDA/Ghidra

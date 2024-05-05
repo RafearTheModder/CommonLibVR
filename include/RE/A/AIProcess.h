@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/A/ActorPackage.h"
+#include "RE/A/ActorValues.h"
 #include "RE/B/BGSDefaultObjectManager.h"
 #include "RE/B/BSTArray.h"
 #include "RE/B/BSTList.h"
@@ -134,6 +135,13 @@ namespace RE
 		};
 		using Hand = Hands::Hand;
 
+		struct EquippedObject
+		{
+			TESForm*      object;  // 00
+			BGSEquipSlot* slot;    // 08
+		};
+		static_assert(sizeof(EquippedObject) == 0x10);
+
 		struct Data0B8
 		{
 		public:
@@ -161,6 +169,7 @@ namespace RE
 		[[nodiscard]] bool      GetIsSummonedCreature() const noexcept;
 		NiAVObject*             GetMagicNode(const BSTSmartPointer<BipedAnim>& a_biped) const;
 		ObjectRefHandle         GetOccupiedFurniture() const;
+		float                   GetRegenDelay(ActorValue a_actorvalue) const;
 		TESPackage*             GetRunningPackage() const;
 		Actor*                  GetUserData() const;
 		float                   GetVoiceRecoveryTime() const;
@@ -183,6 +192,7 @@ namespace RE
 		bool                    SetupSpecialIdle(Actor* a_actor, DEFAULT_OBJECT a_action, TESIdleForm* a_idle, bool a_arg5, bool a_arg6, TESObjectREFR* a_target);
 		void                    StopCurrentIdle(Actor* a_actor, bool a_forceIdleStop);
 		void                    Update3DModel(Actor* a_actor);
+		void                    UpdateRegenDelay(ActorValue a_actorValue, float a_regenDelay);
 
 		// members
 		MiddleLowProcessData*                           middleLow;                      // 000
@@ -202,7 +212,7 @@ namespace RE
 		float                                           deathTime;                      // 094
 		float                                           trackedDamage;                  // 098
 		std::uint32_t                                   pad09C;                         // 09C
-		BSTArray<TESForm*>                              forms;                          // 0A0
+		BSTArray<EquippedObject>                        equippedForms;                  // 0A0
 		Data0B8                                         unk0B8;                         // 0B8
 		TESForm*                                        equippedObjects[Hand::kTotal];  // 0F0
 		std::uint64_t                                   unk100;                         // 100
