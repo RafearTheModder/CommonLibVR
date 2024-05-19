@@ -24,6 +24,8 @@
 #include "RE/T/TESNPC.h"
 #include "RE/T/TESObjectREFR.h"
 
+#include "REX/W32/BASE.h"
+
 namespace RE
 {
 	class ActorMagicCaster;
@@ -748,6 +750,7 @@ namespace RE
 		[[nodiscard]] constexpr bool IsInKillMove() const noexcept { return boolFlags.all(BOOL_FLAGS::kIsInKillMove); }
 		bool                         IsInMidair() const;
 		bool                         IsInRagdollState() const;
+		bool                         IsLeveled() const;
 		bool                         IsLimbGone(std::uint32_t a_limb);
 		bool                         IsMoving() const;
 		bool                         IsOnMount() const;
@@ -769,10 +772,10 @@ namespace RE
 		bool                         RemoveSpell(SpellItem* a_spell);
 		std::int32_t                 RequestDetectionLevel(Actor* a_target, DETECTION_PRIORITY a_priority = DETECTION_PRIORITY::kNormal);
 		bool                         SetDefaultOutfit(BGSOutfit* a_outfit, bool a_update3D);
+		void                         SetHeading(float a_angle);  // SetRotationZ
 		void                         SetLifeState(ACTOR_LIFE_STATE a_lifeState);
+		void                         SetLooking(float a_angle);  // SetRotationX
 		bool                         SetSleepOutfit(BGSOutfit* a_outfit, bool a_update3D);
-		void                         SetRotationX(float a_angle);
-		void                         SetRotationZ(float a_angle);
 		void                         StealAlarm(TESObjectREFR* a_ref, TESForm* a_object, std::int32_t a_num, std::int32_t a_total, TESForm* a_owner, bool a_allowWarning);
 		void                         StopAlarmOnActor();
 		void                         StopInteractingQuick(bool a_unk02);
@@ -851,7 +854,7 @@ namespace RE
 		std::uint32_t                                         unk274;                             // 274
 		std::uint64_t                                         unk278;                             // 278
 		std::uint64_t                                         unk280;                             // 280
-		WinAPI::CRITICAL_SECTION                              unk288;                             // 288 - havok related
+		REX::W32::CRITICAL_SECTION                            unk288;                             // 288 - havok related
 
 	private:
 		void        CalculateCurrentVendorFaction() const;
