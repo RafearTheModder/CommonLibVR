@@ -435,6 +435,7 @@ namespace RE
 		virtual void          ClearAllCrimeGold(TESFaction* a_faction);                        // 12D
 		virtual void          Unk_12E(void);                                                   // 12E - { return 0; }
 
+		static float            GetDifficultyMultiplier(uint32_t difficulty, RE::ActorValue actorValue, bool isPlayer);
 		static PlayerCharacter* GetSingleton();
 		static bool             IsGodMode();
 

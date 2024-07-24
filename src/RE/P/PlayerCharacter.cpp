@@ -11,6 +11,13 @@ namespace RE
 		return func(this, a_addThreshold);
 	}
 
+	float PlayerCharacter::GetDifficultyMultiplier(uint32_t difficulty, RE::ActorValue actorValue, bool isPlayer)
+	{
+		using func_t = decltype(&PlayerCharacter::GetDifficultyMultiplier);
+		REL::Relocation<func_t> func{ RELOCATION_ID(25920, 26503) };
+		return func(difficulty, actorValue, isPlayer);
+	}
+
 	PlayerCharacter* PlayerCharacter::GetSingleton()
 	{
 		REL::Relocation<NiPointer<PlayerCharacter>*> singleton{ Offset::PlayerCharacter::Singleton };
