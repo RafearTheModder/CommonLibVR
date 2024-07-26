@@ -9,6 +9,7 @@
 
 namespace RE
 {
+	class Actor;
 	class CombatController;
 	class CombatThreat;
 
@@ -25,6 +26,9 @@ namespace RE
 	class CombatState
 	{
 	public:
+		// Member functions
+		void DamagedByAttacker(Actor* a_attacker, float a_damage);
+
 		// members
 		float                             unk00;                        // 00
 		bool                              isFleeing;                    // 04
@@ -40,7 +44,7 @@ namespace RE
 		AITimeStamp                       activeCombatantLastSeenTime;  // 1C
 		AITimeStamp                       unk20;                        // 20
 		AITimeStamp                       unk24;                        // 24
-		AITimeStamp                       unk28;                        // 28
+		AITimeStamp                       damagedByAttackerTime;        // 28
 		AITimer                           attackDialogueTimer;          // 2C
 		AITimer                           tauntDialogueTimer;           // 34
 		AITimer                           bleedOutDialogueTimer;        // 3C

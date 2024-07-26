@@ -1400,6 +1400,7 @@
 #include "RE/S/ScriptEffect.h"
 #include "RE/S/ScriptEventSourceHolder.h"
 #include "RE/S/ScriptFunction.h"
+#include "RE/S/ScriptOutput.h"
 #include "RE/S/ScriptedRefEffect.h"
 #include "RE/S/ScrollItem.h"
 #include "RE/S/SendPlayerToJailFunctor.h"

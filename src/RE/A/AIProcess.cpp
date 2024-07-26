@@ -305,4 +305,12 @@ namespace RE
 			}
 		}
 	}
+
+	void AIProcess::ModifyTrackedDamage(Actor* a_attacker, float a_damage)
+	{
+		if (a_attacker && a_attacker == PlayerCharacter::GetSingleton())
+		{
+			this->trackedDamage += a_damage;
+		}
+	}
 }

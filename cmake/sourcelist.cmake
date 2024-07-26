@@ -1408,6 +1408,7 @@ set(SOURCES
 	include/RE/S/ScriptEffect.h
 	include/RE/S/ScriptEventSourceHolder.h
 	include/RE/S/ScriptFunction.h
+	include/RE/S/ScriptOutput.h
 	include/RE/S/ScriptedRefEffect.h
 	include/RE/S/ScrollItem.h
 	include/RE/S/SendPlayerToJailFunctor.h
@@ -1715,6 +1716,7 @@ set(SOURCES
 	include/csv.h
 	src/RE/A/AIFormulas.cpp
 	src/RE/A/AIProcess.cpp
+	src/RE/A/AITimer.cpp
 	src/RE/A/ActiveEffect.cpp
 	src/RE/A/ActiveEffectFactory.cpp
 	src/RE/A/Actor.cpp
@@ -1801,6 +1803,8 @@ set(SOURCES
 	src/RE/C/ChestsLooted.cpp
 	src/RE/C/Color.cpp
 	src/RE/C/ColorUtil.cpp
+	src/RE/C/CombatController.cpp
+	src/RE/C/CombatState.cpp
 	src/RE/C/CommandTable.cpp
 	src/RE/C/Console.cpp
 	src/RE/C/ConsoleLog.cpp

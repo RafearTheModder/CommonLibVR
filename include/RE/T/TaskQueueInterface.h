@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/B/BSPointerHandle.h"
+#include "RE/S/ScriptOutput.h"
 
 namespace RE
 {
@@ -25,6 +26,14 @@ namespace RE
 		void QueueForceWeather(TESWeather* a_weather, bool a_forceOverride);                                             // 64
 		void QueueActorDisarm(ActorHandle& a_target, ActorHandle& a_caster);                                             // 91
 		void QueueRemoveSpell(ActorHandle& a_actor, SpellItem* a_spellItem);                                             // 93
+
+		template <class... Args>
+		void QueueScriptFunctionCall(ScriptOutput scriptOutput, TESObjectREFR* reference, Args&&... args)
+		{
+			using func_t = decltype(&TaskQueueInterface::QueueScriptFunctionCall<Args...>);
+			REL::Relocation<func_t> func{ RELOCATION_ID(35918, 36893) };
+			return func(this, scriptOutput, reference, args...);
+		}
 	private:
 		KEEP_FOR_RE()
 	};

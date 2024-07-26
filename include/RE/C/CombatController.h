@@ -27,6 +27,9 @@ namespace RE
 			return state->isFleeing;
 		}
 
+		// Member functions
+		void DamagedByAttacker(Actor* a_ttacker, float a_damage);
+
 		// members
 		CombatGroup*                   combatGroup;           // 00
 		CombatState*                   state;                 // 08

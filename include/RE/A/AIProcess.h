@@ -192,6 +192,7 @@ namespace RE
 		void                    StopCurrentIdle(Actor* a_actor, bool a_forceIdleStop);
 		void                    Update3DModel(Actor* a_actor);
 		void                    UpdateRegenDelay(ActorValue a_actorValue, float a_regenDelay);
+		void                    ModifyTrackedDamage(Actor* a_attacker, float a_damage);
 
 		// members
 		MiddleLowProcessData*                           middleLow;                      // 000

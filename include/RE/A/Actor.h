@@ -650,6 +650,8 @@ namespace RE
 		bool                         AddAnimationGraphEventSink(BSTEventSink<BSAnimationGraphEvent>* a_sink) const;
 		void                         AddCastPower(SpellItem* a_power);
 		bool                         AddSpell(SpellItem* a_spell);
+		float                        AdjustHealthDamageToDifficulty(float a_damage, float a_onlyReduceDamage) const;
+		bool                         CanBeKilledBy(Actor* a_attacker) const;
 		void                         AddToFaction(TESFaction* a_faction, std::int8_t a_rank);
 		void                         AddWornOutfit(BGSOutfit* a_outfit, bool a_forceUpdate);
 		void                         AllowBleedoutDialogue(bool a_canTalk);
@@ -676,6 +678,7 @@ namespace RE
 		TESNPC*                      GetActorBase();
 		const TESNPC*                GetActorBase() const;
 		float                        GetActorValueModifier(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_value) const;
+		void                         ModifyActorValue(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_actorValue, float a_value, Actor* a_source);
 		float                        GetAimAngle() const;
 		float                        GetAimHeading() const;
 		InventoryEntryData*          GetAttackingWeapon();

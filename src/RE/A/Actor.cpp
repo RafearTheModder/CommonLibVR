@@ -83,6 +83,20 @@ namespace RE
 		return func(this, a_spell);
 	}
 
+	float Actor::AdjustHealthDamageToDifficulty(float a_damage, float a_onlyReduceDamage) const
+	{
+		using func_t = decltype(&Actor::AdjustHealthDamageToDifficulty);
+		REL::Relocation<func_t> func{ RELOCATION_ID(36506, 37506) };
+		return func(this, a_damage, a_onlyReduceDamage);
+	}
+
+	bool Actor::CanBeKilledBy(Actor* a_attacker) const
+	{
+		using func_t = decltype(&Actor::CanBeKilledBy);
+		REL::Relocation<func_t> func{ RELOCATION_ID(36247, 37229) };
+		return func(this, a_attacker);
+	}
+
 	void Actor::AddToFaction(TESFaction* a_faction, std::int8_t a_rank)
 	{
 		using func_t = decltype(&Actor::AddToFaction);
@@ -265,6 +279,13 @@ namespace RE
 		using func_t = decltype(&Actor::GetActorValueModifier);
 		REL::Relocation<func_t> func{ RELOCATION_ID(37524, 38469) };
 		return func(this, a_modifier, a_value);
+	}
+
+	void Actor::ModifyActorValue(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_actorValue, float a_value, Actor* a_source)
+	{
+		using func_t = decltype(&Actor::ModifyActorValue);
+		REL::Relocation<func_t> func{ RELOCATION_ID(37523, 38468) };
+		func(this, a_modifier, a_actorValue, a_value, a_source);
 	}
 
 	float Actor::GetAimAngle() const
