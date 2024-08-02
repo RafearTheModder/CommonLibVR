@@ -15,6 +15,7 @@ namespace RE
 	class BGSSaveFormBuffer;
 	class TESBoundObject;
 	class TESFile;
+	class ExtraDataList;
 	struct FORM;
 	struct FORM_GROUP;
 
@@ -350,6 +351,8 @@ namespace RE
 		[[nodiscard]] bool IsWeapon() const noexcept { return Is(FormType::Weapon); }
 
 		void SetPlayerKnows(bool a_known);
+		EnchantmentItem* GetEnchantment(ExtraDataList* extraDataList);
+		std::uint16_t    GetMaximumCharge(ExtraDataList* extraDataList) const;
 
 		// members
 		TESFileContainer                                sourceFiles;      // 08

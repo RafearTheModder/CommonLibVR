@@ -288,6 +288,13 @@ namespace RE
 		func(this, a_modifier, a_actorValue, a_value, a_source);
 	}
 
+	void Actor::RemoveActorValueModifiers(stl::enumeration<ActorValue, std::uint32_t> actorValue)
+	{
+		using func_t = decltype(&Actor::RemoveActorValueModifiers);
+		REL::Relocation<func_t> func{ RELOCATION_ID(37527, 38476) };
+		func(this, actorValue);
+	}
+
 	float Actor::GetAimAngle() const
 	{
 		bool aimActive{ false };
@@ -1315,5 +1322,14 @@ namespace RE
 		using func_t = decltype(&Actor::RemoveOutfitItems);
 		REL::Relocation<func_t> func{ RELOCATION_ID(19264, 19690) };
 		return func(this, a_outfit);
+	}
+	
+		void                         SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell);
+
+	void Actor::SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell)
+	{
+		using func_t = decltype(&Actor::SetSelectedSpell);
+		REL::Relocation<func_t> func{ RELOCATION_ID(37819, 38768) };
+		return func(this, castingSource, selectedSpell);
 	}
 }

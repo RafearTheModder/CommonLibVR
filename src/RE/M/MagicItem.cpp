@@ -99,4 +99,31 @@ namespace RE
 		REL::Relocation<func_t> func{ RELOCATION_ID(11222, 11341) };
 		return func(this, a_visitor);
 	}
+
+	ActorValue MagicItem::GetCostActorValue(stl::enumeration<MagicSystem::CastingSource, std::uint32_t> castingSource) const
+	{
+		switch (this->GetSpellType())
+		{
+			case MagicSystem::SpellType::kSpell:
+			case MagicSystem::SpellType::kLesserPower:
+			case MagicSystem::SpellType::kPoison:
+			{
+				return ActorValue::kMagicka;
+			}
+			case MagicSystem::SpellType::kEnchantment:
+			case MagicSystem::SpellType::kStaffEnchantment:
+			{
+				if (this->GetCastingType() == MagicSystem::CastingType::kConstantEffect)
+				{
+					return ActorValue::kNone;
+				}
+
+				return castingSource == MagicSystem::CastingSource::kLeftHand ? ActorValue::kLeftItemCharge : ActorValue::kRightItemCharge;
+			}
+			default:
+			{
+				return ActorValue::kNone;
+			}
+		}
+	}
 }

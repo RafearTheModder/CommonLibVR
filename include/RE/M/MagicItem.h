@@ -122,6 +122,7 @@ namespace RE
 		[[nodiscard]] bool                   IsPermanent() const;
 		[[nodiscard]] Effect*                GetEffectIsMatch(EffectSetting* a_base, float a_mag, ::uint32_t a_area, ::uint32_t a_dur, float a_cost);
 		void                                 Traverse(MagicItemTraversalFunctor& a_visitor) const;
+		ActorValue                           GetCostActorValue(stl::enumeration<MagicSystem::CastingSource, std::uint32_t> castingSource) const;
 
 		// members
 		BSTArray<Effect*>           effects;          // 58

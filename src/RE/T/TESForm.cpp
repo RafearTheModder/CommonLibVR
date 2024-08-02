@@ -189,4 +189,18 @@ namespace RE
 		REL::Relocation<func_t> func{ RELOCATION_ID(14482, 14639) };
 		return func(this, a_known);
 	}
+
+	EnchantmentItem* TESForm::GetEnchantment(ExtraDataList* extraDataList)
+	{
+		using func_t = decltype(&TESForm::GetEnchantment);
+		REL::Relocation<func_t> func{ RELOCATION_ID(14411, 14563) };
+		return func(this, extraDataList);
+	}
+
+	std::uint16_t TESForm::GetMaximumCharge(ExtraDataList* extraDataList) const
+	{
+		using func_t = decltype(&TESForm::GetMaximumCharge);
+		REL::Relocation<func_t> func{ RELOCATION_ID(14412, 14564) };
+		return func(this, extraDataList);
+	}
 }

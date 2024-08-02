@@ -256,4 +256,16 @@ namespace RE
 		REL::Relocation<func_t> func(RELOCATION_ID(39413, 40488));
 		return func(this, a_skill, a_experience);
 	}
+
+	void PlayerCharacter::ResetInsufficientWeaponChargeMessage(bool leftHand)
+	{
+		if (leftHand)
+		{
+			this->playerFlags.shownWeapChargeLeftHand = false;
+		}
+		else
+		{
+			this->playerFlags.shownWeapChargeRightHand = false;
+		}
+	}
 }

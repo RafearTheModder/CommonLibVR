@@ -261,8 +261,8 @@ namespace RE
 			bool unk2_7: 1;                         // 2:7
 			bool isInThirdPersonMode: 1;            // 3:0
 			bool unk3_1: 1;                         // 3:1
-			bool unk3_2: 1;                         // 3:2
-			bool unk3_3: 1;                         // 3:3
+			bool shownWeapChargeLeftHand: 1;        // 3:2
+			bool shownWeapChargeRightHand: 1;       // 3:3
 			bool target3DDistant: 1;                // 3:4 - Distance from object in crosshair > 1000
 			bool isInCombat: 1;                     // 3:5
 			bool attemptedYieldInCurrentCombat: 1;  // 3:6 - Set when yielding to guard for arrest dialogue, prevents multiple arrest dialogues
@@ -472,6 +472,7 @@ namespace RE
 		void SetAIDriven(bool a_enable);
 		void SetEscaping(bool a_flag, bool a_escaped);
 		void UpdateCrosshairs();
+		void ResetInsufficientWeaponChargeMessage(bool leftHand);
 
 		template <class T>
 		inline BSTEventSource<T>* GetEventSource()

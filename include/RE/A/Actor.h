@@ -679,6 +679,7 @@ namespace RE
 		const TESNPC*                GetActorBase() const;
 		float                        GetActorValueModifier(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_value) const;
 		void                         ModifyActorValue(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_actorValue, float a_value, Actor* a_source);
+		void                         RemoveActorValueModifiers(stl::enumeration<ActorValue, std::uint32_t> actorValue);
 		float                        GetAimAngle() const;
 		float                        GetAimHeading() const;
 		InventoryEntryData*          GetAttackingWeapon();
@@ -798,6 +799,7 @@ namespace RE
 		void                         VisitSpells(ForEachSpellVisitor& a_visitor);
 		std::uint8_t                 WhoIsCasting();
 		bool                         WouldBeStealing(const TESObjectREFR* a_target) const;
+		void                         SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell);
 
 		// members
 		stl::enumeration<BOOL_BITS, std::uint32_t>            boolBits;                           // 0E0
