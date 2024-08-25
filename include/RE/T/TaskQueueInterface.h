@@ -34,6 +34,7 @@ namespace RE
 			REL::Relocation<func_t> func{ RELOCATION_ID(35918, 36893) };
 			return func(this, scriptOutput, reference, args...);
 		}
+
 	private:
 		KEEP_FOR_RE()
 	};
