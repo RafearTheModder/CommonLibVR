@@ -288,6 +288,13 @@ namespace RE
 		func(this, a_modifier, a_actorValue, a_value, a_source);
 	}
 
+	void Actor::HandleActorValueModified(ActorValue actorValue, float oldValue, float deltaValue, Actor* source)
+	{
+		using func_t = decltype(&Actor::HandleActorValueModified);
+		REL::Relocation<func_t> func{ RELOCATION_ID(37525, 38470) };
+		func(this, actorValue, oldValue, deltaValue, source);
+	}
+
 	void Actor::RemoveActorValueModifiers(stl::enumeration<ActorValue, std::uint32_t> actorValue)
 	{
 		using func_t = decltype(&Actor::RemoveActorValueModifiers);

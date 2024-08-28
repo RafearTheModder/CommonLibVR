@@ -678,6 +678,7 @@ namespace RE
 		TESNPC*                      GetActorBase();
 		const TESNPC*                GetActorBase() const;
 		float                        GetActorValueModifier(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_value) const;
+		void                         HandleActorValueModified(ActorValue actorValue, float oldValue, float deltaValue, Actor* source);
 		void                         ModifyActorValue(ACTOR_VALUE_MODIFIER a_modifier, ActorValue a_actorValue, float a_value, Actor* a_source);
 		void                         RemoveActorValueModifiers(stl::enumeration<ActorValue, std::uint32_t> actorValue);
 		float                        GetAimAngle() const;
