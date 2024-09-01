@@ -102,25 +102,23 @@ namespace RE
 
 	ActorValue MagicItem::GetCostActorValue(stl::enumeration<MagicSystem::CastingSource, std::uint32_t> castingSource) const
 	{
-		switch (this->GetSpellType())
-		{
-			case MagicSystem::SpellType::kSpell:
-			case MagicSystem::SpellType::kLesserPower:
-			case MagicSystem::SpellType::kPoison:
+		switch (this->GetSpellType()) {
+		case MagicSystem::SpellType::kSpell:
+		case MagicSystem::SpellType::kLesserPower:
+		case MagicSystem::SpellType::kPoison:
 			{
 				return ActorValue::kMagicka;
 			}
-			case MagicSystem::SpellType::kEnchantment:
-			case MagicSystem::SpellType::kStaffEnchantment:
+		case MagicSystem::SpellType::kEnchantment:
+		case MagicSystem::SpellType::kStaffEnchantment:
 			{
-				if (this->GetCastingType() == MagicSystem::CastingType::kConstantEffect)
-				{
+				if (this->GetCastingType() == MagicSystem::CastingType::kConstantEffect) {
 					return ActorValue::kNone;
 				}
 
 				return castingSource == MagicSystem::CastingSource::kLeftHand ? ActorValue::kLeftItemCharge : ActorValue::kRightItemCharge;
 			}
-			default:
+		default:
 			{
 				return ActorValue::kNone;
 			}

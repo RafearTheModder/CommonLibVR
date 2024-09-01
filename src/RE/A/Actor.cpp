@@ -1330,8 +1330,8 @@ namespace RE
 		REL::Relocation<func_t> func{ RELOCATION_ID(19264, 19690) };
 		return func(this, a_outfit);
 	}
-	
-		void                         SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell);
+
+	void SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell);
 
 	void Actor::SetSelectedSpell(MagicSystem::CastingSource castingSource, MagicItem* selectedSpell)
 	{

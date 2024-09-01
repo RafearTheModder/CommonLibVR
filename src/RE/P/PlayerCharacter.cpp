@@ -259,12 +259,9 @@ namespace RE
 
 	void PlayerCharacter::ResetInsufficientWeaponChargeMessage(bool leftHand)
 	{
-		if (leftHand)
-		{
+		if (leftHand) {
 			this->playerFlags.shownWeapChargeLeftHand = false;
-		}
-		else
-		{
+		} else {
 			this->playerFlags.shownWeapChargeRightHand = false;
 		}
 	}
