@@ -5,9 +5,13 @@
 
 namespace RE
 {
-	TESDataHandler* TESDataHandler::GetSingleton(bool a_VRESL)
+	TESDataHandler* TESDataHandler::GetSingleton(bool
+#ifdef SKYRIMVR
+			a_VRESL
+#endif
+	)
 	{
-		REL::Relocation<TESDataHandler**> singleton{ Offset::TESDataHandler::Singleton };
+		REL::Relocation<TESDataHandler**> singleton{ RELOCATION_ID(514141, 400269) };
 #ifdef SKYRIMVR
 		if (a_VRESL && !TESDataHandler::VRcompiledFileCollection) {
 			const auto VRhandle = REX::W32::GetModuleHandleW(L"skyrimvresl");
@@ -25,14 +29,14 @@ namespace RE
 	bool TESDataHandler::AddFormToDataHandler(TESForm* a_form)
 	{
 		using func_t = decltype(&TESDataHandler::AddFormToDataHandler);
-		REL::Relocation<func_t> func{ RELOCATION_ID(13597, 13693) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13597, 13693) };
 		return func(this, a_form);
 	}
 
 	std::uint32_t TESDataHandler::LoadScripts()
 	{
 		using func_t = decltype(&TESDataHandler::LoadScripts);
-		REL::Relocation<func_t> func{ Offset::TESDataHandler::LoadScripts };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13657, 13766) };
 		return func(this);
 	}
 
@@ -216,7 +220,7 @@ namespace RE
 	ObjectRefHandle TESDataHandler::CreateReferenceAtLocation(TESBoundObject* a_base, const NiPoint3& a_location, const NiPoint3& a_rotation, TESObjectCELL* a_targetCell, TESWorldSpace* a_selfWorldSpace, TESObjectREFR* a_alreadyCreatedRef, BGSPrimitive* a_primitive, const ObjectRefHandle& a_linkedRoomRefHandle, bool a_forcePersist, bool a_arg11)
 	{
 		using func_t = decltype(&TESDataHandler::CreateReferenceAtLocation);
-		REL::Relocation<func_t> func{ RELOCATION_ID(13625, 13723) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13625, 13723) };
 		return func(this, a_base, a_location, a_rotation, a_targetCell, a_selfWorldSpace, a_alreadyCreatedRef, a_primitive, a_linkedRoomRefHandle, a_forcePersist, a_arg11);
 	}
 }

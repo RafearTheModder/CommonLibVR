@@ -22,7 +22,7 @@
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "STRING",
-          "value": "$env{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         }
       },
       "hidden": true,
@@ -68,7 +68,6 @@
       },
       "generator": "Visual Studio 17 2022",
       "inherits": [
-        "vr",
         "cmake-dev",
         "vcpkg",
         "windows"

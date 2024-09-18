@@ -216,11 +216,13 @@ set(SOURCES
 	include/RE/B/BSBitField.h
 	include/RE/B/BSBloodSplatterShaderProperty.h
 	include/RE/B/BSBound.h
+	include/RE/B/BSComputeShader.h
 	include/RE/B/BSContainer.h
 	include/RE/B/BSCoreTypes.h
 	include/RE/B/BSCullingProcess.h
 	include/RE/B/BSDirectInputManager.h
 	include/RE/B/BSDismemberSkinInstance.h
+	include/RE/B/BSDistantTreeShaderProperty.h
 	include/RE/B/BSDynamicTriShape.h
 	include/RE/B/BSEffectShaderData.h
 	include/RE/B/BSEffectShaderMaterial.h
@@ -240,6 +242,7 @@ set(SOURCES
 	include/RE/B/BSGameSound.h
 	include/RE/B/BSGamepadDevice.h
 	include/RE/B/BSGeometry.h
+	include/RE/B/BSGrassShaderProperty.h
 	include/RE/B/BSHandleRefObject.h
 	include/RE/B/BSIInputDevice.h
 	include/RE/B/BSIMusicTrack.h
@@ -303,6 +306,8 @@ set(SOURCES
 	include/RE/B/BSParticleShaderEmitter.h
 	include/RE/B/BSParticleShaderObjectEmitter.h
 	include/RE/B/BSParticleShaderProperty.h
+	include/RE/B/BSParticleShaderRainEmitter.h
+	include/RE/B/BSParticleShaderSnowEmitter.h
 	include/RE/B/BSPathingCell.h
 	include/RE/B/BSPointerHandle.h
 	include/RE/B/BSPointerHandleManager.h
@@ -312,7 +317,11 @@ set(SOURCES
 	include/RE/B/BSReloadShaderI.h
 	include/RE/B/BSRenderPass.h
 	include/RE/B/BSResource.h
+	include/RE/B/BSResourceEntry.h
+	include/RE/B/BSResourceEntryCache.h
 	include/RE/B/BSResourceEntryDB.h
+	include/RE/B/BSResourceEntryQueue.h
+	include/RE/B/BSResourceHandle.h
 	include/RE/B/BSResourceNiBinaryStream.h
 	include/RE/B/BSResponse.h
 	include/RE/B/BSSaveDataSystemUtility.h
@@ -331,6 +340,7 @@ set(SOURCES
 	include/RE/B/BSShaderTextureSet.h
 	include/RE/B/BSShadowLight.h
 	include/RE/B/BSSimpleScaleController.h
+	include/RE/B/BSSkyShaderProperty.h
 	include/RE/B/BSSmallBlockAllocator.h
 	include/RE/B/BSSoundHandle.h
 	include/RE/B/BSStorage.h
@@ -373,6 +383,7 @@ set(SOURCES
 	include/RE/B/BSTriShape.h
 	include/RE/B/BSUIMessageData.h
 	include/RE/B/BSUIScaleformData.h
+	include/RE/B/BSUtilityShader.h
 	include/RE/B/BSVRInterface.h
 	include/RE/B/BSValueNode.h
 	include/RE/B/BSVirtualKeyboardDevice.h
@@ -513,7 +524,6 @@ set(SOURCES
 	include/RE/C/CrosshairPickData.h
 	include/RE/C/CureEffect.h
 	include/RE/C/CursorMenu.h
-	include/RE/D/DBTraits.h
 	include/RE/D/DamageImpactData.h
 	include/RE/D/DarknessEffect.h
 	include/RE/D/DecalData.h
@@ -1202,6 +1212,7 @@ set(SOURCES
 	include/RE/M/MapInputHandler.h
 	include/RE/M/MapLookHandler.h
 	include/RE/M/MapMenu.h
+	include/RE/M/MapMenuMarker.h
 	include/RE/M/MapMoveHandler.h
 	include/RE/M/MapZoomHandler.h
 	include/RE/M/MarkerUsedData.h
@@ -1223,7 +1234,6 @@ set(SOURCES
 	include/RE/M/MissileProjectile.h
 	include/RE/M/MistMenu.h
 	include/RE/M/ModManagerMenu.h
-	include/RE/M/ModelProcessor.h
 	include/RE/M/ModelReferenceEffect.h
 	include/RE/M/Moon.h
 	include/RE/M/MouseMoveEvent.h
@@ -1325,6 +1335,8 @@ set(SOURCES
 	include/RE/N/NiTexture.h
 	include/RE/N/NiTimeController.h
 	include/RE/N/NiTransform.h
+	include/RE/N/NiTriBasedGeometry.h
+	include/RE/N/NiTriShape.h
 	include/RE/N/NightEyeEffect.h
 	include/RE/N/NonActorMagicCaster.h
 	include/RE/N/NonActorMagicTarget.h
@@ -1563,6 +1575,7 @@ set(SOURCES
 	include/RE/T/TESPackage.h
 	include/RE/T/TESPackageData.h
 	include/RE/T/TESPlayerBowShotEvent.h
+	include/RE/T/TESProcessor.h
 	include/RE/T/TESProduceForm.h
 	include/RE/T/TESQualityForm.h
 	include/RE/T/TESQuest.h
@@ -1990,6 +2003,7 @@ set(SOURCES
 	src/RE/S/ScriptEventSourceHolder.cpp
 	src/RE/S/SendUIMessage.cpp
 	src/RE/S/Setting.cpp
+	src/RE/S/ShadowSceneNode.cpp
 	src/RE/S/ShoutAttack.cpp
 	src/RE/S/SkillIncrease.cpp
 	src/RE/S/Sky.cpp

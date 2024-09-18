@@ -52,11 +52,13 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_BGSSaveLoadManager;
+		inline static constexpr auto VTABLE = VTABLE_BGSSaveLoadManager;
 
 		class Thread : public BSThread
 		{
 		public:
 			inline static constexpr auto RTTI = RTTI_BGSSaveLoadManager__Thread;
+			inline static constexpr auto VTABLE = VTABLE_BGSSaveLoadManager__Thread;
 
 			~Thread() override;  // 00
 
@@ -202,7 +204,7 @@ namespace RE
 #	ifdef SKYRIM_SUPPORT_AE
 	static_assert(sizeof(BGSSaveLoadManager) == 0x418);
 #	else
-	static_assert(sizeof(BGSSaveLoadManager) == 0x3D0);
+	static_assert(sizeof(BGSSaveLoadManager) == 0x3D8);
 #	endif
 #else
 	static_assert(sizeof(BGSSaveLoadManager) == 0x3D8);

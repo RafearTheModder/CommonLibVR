@@ -1,7 +1,7 @@
 #pragma once
-
-#include "RE/I/IMenu.h"
-#include "RE/M/MenuEventHandler.h"
+#ifdef SKYRIMVR
+#	include "RE/I/IMenu.h"
+#	include "RE/M/MenuEventHandler.h"
 
 namespace RE
 {
@@ -26,5 +26,5 @@ namespace RE
 		KEEP_FOR_RE()
 	};
 	static_assert(sizeof(CalibrationOptionMenu) == 0x58);
-
 }
+#endif
