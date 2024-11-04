@@ -59,4 +59,39 @@ namespace RE
 	{
 		return baseEffect->IsHostile();
 	}
+
+	void Effect::ResetCost()
+	{
+		using func_t = decltype(&Effect::ResetCost);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(10932, 11021) };
+		return func(this);
+	}
+
+	bool Effect::SetDuration(std::uint32_t duration)
+	{
+		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoDuration) || duration < 0)
+		{
+			return false;
+		}
+
+		this->effectItem.duration = duration;
+
+		this->ResetCost();
+
+		return true;
+	}
+
+	bool Effect::SetMagnitude(float magnitude)
+	{
+		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoMagnitude) || magnitude < 0.0F)
+		{
+			return false;
+		}
+
+		this->effectItem.magnitude = magnitude;
+
+		this->ResetCost();
+
+		return true;
+	}
 }

@@ -33,6 +33,9 @@ namespace RE
 		std::uint32_t GetArea() const;
 		std::uint32_t GetDuration() const;
 		bool          IsHostile() const;
+		void          ResetCost();
+		bool          SetDuration(std::uint32_t duration);
+		bool          SetMagnitude(float magnitude);
 
 		// members
 		EffectItem     effectItem;  // 00 - EFIT

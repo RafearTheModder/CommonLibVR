@@ -68,6 +68,9 @@ namespace RE
 		virtual void                     InitFromChunk(TESFile* a_mod) override;                    // 6F
 		virtual void                     InitChunk() override;                                      // 70
 
+		// Non-member functions
+		static float ModifyPower(float power, float enchantingSkill);
+
 		// members
 		Data data;  // 90 - ENIT
 	private:
