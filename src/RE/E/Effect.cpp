@@ -69,8 +69,7 @@ namespace RE
 
 	bool Effect::SetDuration(std::uint32_t duration)
 	{
-		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoDuration) || duration < 0)
-		{
+		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoDuration) || duration < 0) {
 			return false;
 		}
 
@@ -83,8 +82,7 @@ namespace RE
 
 	bool Effect::SetMagnitude(float magnitude)
 	{
-		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoMagnitude) || magnitude < 0.0F)
-		{
+		if (this->baseEffect->data.flags.all(EffectSetting::EffectSettingData::Flag::kNoMagnitude) || magnitude < 0.0F) {
 			return false;
 		}
 
