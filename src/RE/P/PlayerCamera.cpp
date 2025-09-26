@@ -4,7 +4,7 @@ namespace RE
 {
 	PlayerCamera* PlayerCamera::GetSingleton()
 	{
-		REL::Relocation<PlayerCamera**> singleton{ Offset::PlayerCamera::Singleton };
+		static REL::Relocation<PlayerCamera**> singleton{ RELOCATION_ID(514642, 400802) };
 		return *singleton;
 	}
 
@@ -14,7 +14,7 @@ namespace RE
 			return false;
 		}
 		using func_t = decltype(&PlayerCamera::ForceFirstPerson);
-		REL::Relocation<func_t> func{ RELOCATION_ID(49858, 50790) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49858, 50790) };
 		func(this);
 		return true;
 	}
@@ -25,7 +25,7 @@ namespace RE
 			return false;
 		}
 		using func_t = decltype(&PlayerCamera::ForceThirdPerson);
-		REL::Relocation<func_t> func{ RELOCATION_ID(49863, 50796) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49863, 50796) };
 		func(this);
 		return true;
 	}
@@ -50,6 +50,13 @@ namespace RE
 		return QCameraEquals((!REL::Module::IsVR() ? CameraState::kThirdPerson : CameraState::kVRThirdPerson));
 	}
 
+	void PlayerCamera::PushCameraState(CameraState a_state)
+	{
+		using func_t = decltype(&PlayerCamera::PushCameraState);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49947, 50880) };
+		return func(this, a_state);
+	}
+
 	bool PlayerCamera::QCameraEquals(CameraState a_cameraState) const
 	{
 		return currentState && currentState == (!REL::Module::IsVR() ? GetRuntimeData().cameraStates[a_cameraState] : GetVRRuntimeData().cameraStates[a_cameraState]);
@@ -58,14 +65,21 @@ namespace RE
 	void PlayerCamera::ToggleFreeCameraMode(bool a_freezeTime)
 	{
 		using func_t = decltype(&PlayerCamera::ToggleFreeCameraMode);
-		REL::Relocation<func_t> func{ RELOCATION_ID(49876, 50809) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49876, 50809) };
 		return func(this, a_freezeTime);
+	}
+
+	void PlayerCamera::Update()
+	{
+		using func_t = decltype(&PlayerCamera::Update);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49852, 50784) };
+		return func(this);
 	}
 
 	void PlayerCamera::UpdateThirdPerson(bool a_weaponDrawn)
 	{
 		using func_t = decltype(&PlayerCamera::UpdateThirdPerson);
-		REL::Relocation<func_t> func{ Offset::PlayerCamera::UpdateThirdPerson };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(49908, 50841) };
 		return func(this, a_weaponDrawn);
 	}
 }

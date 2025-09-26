@@ -24,7 +24,6 @@
 #include <RE/B/BSCoreTypes.h>
 #include <RE/N/NiPoint3.h>
 
-
 namespace RE
 {
 	enum class AQUIRE_TYPE;
@@ -55,7 +54,8 @@ namespace RE
 	struct PositionPlayerEvent;
 	struct TESQuestStageItem;
 	struct TESTrackedStatsEvent;
-#ifdef ENABLE_SKYRIM_VR
+	struct TeleportPath;
+#ifdef EXCLUSIVE_SKYRIM_VR
 	struct VRDeviceConnectionChange;
 	struct VROverlayChange;
 	struct VRResetHMDHeight;
@@ -264,24 +264,26 @@ namespace RE
 	{
 	public:
 		// members
-		float                                          timer;   // 0
-		RefHandle                                      refObj;  // 4
-		stl::enumeration<PLAYER_ACTION, std::uint32_t> next;    // 8
+		float                                      timer;   // 0
+		RefHandle                                  refObj;  // 4
+		REX::EnumSet<PLAYER_ACTION, std::uint32_t> next;    // 8
 	};
 	static_assert(sizeof(PlayerActionObject) == 0xC);
 
 	class PlayerCharacter :
-#ifndef ENABLE_SKYRIM_AE
 		public Character,                            // 000
-		public BSTEventSource<BGSActorCellEvent>,    // 2D0
-		public BSTEventSource<BGSActorDeathEvent>,   // 328
-		public BSTEventSource<PositionPlayerEvent>,  // 380
-		public BSTEventSink<MenuOpenCloseEvent>,     // 2B0
-		public BSTEventSink<MenuModeChangeEvent>,    // 2B8
-		public BSTEventSink<UserEventEnabledEvent>,  // 2C0
-		public BSTEventSink<TESTrackedStatsEvent>    // 2C8
-#else
-		public Character  // 000
+		public BSTEventSource<BGSActorCellEvent>,    // SE 2D0, AE 2D8, VR 2E8
+		public BSTEventSource<BGSActorDeathEvent>,   // SE 328, AE 330, VR 340
+		public BSTEventSource<PositionPlayerEvent>,  // SE 380, AE 388, VR 398
+		public BSTEventSink<MenuOpenCloseEvent>,     // SE,VR 2B0, AE 2B8
+		public BSTEventSink<MenuModeChangeEvent>,    // SE,VR 2B8, AE 2C0
+		public BSTEventSink<UserEventEnabledEvent>,  // SE,VR 2C0, AE 2C8
+		public BSTEventSink<TESTrackedStatsEvent>    // SE,VR 2C8, AE 2D0
+#ifdef EXCLUSIVE_SKYRIM_VR
+		,
+		public BSTEventSink<VROverlayChange>,           // 2D0
+		public BSTEventSink<VRDeviceConnectionChange>,  // 2D8
+		public BSTEventSink<VRResetHMDHeight>           // 2E0
 #endif
 	{
 	public:
@@ -303,11 +305,12 @@ namespace RE
 			kTelekinesis,
 		};
 
-		enum class ByCharGenFlag
+		enum class ByCharGenFlag : std::uint8_t
 		{
 			kNone = 0,
 			kDisableSaving = 1 << 0,
-			kHandsBound = 1 << 2
+			kDisableWaiting = 1 << 1,
+			kShowControlsDisabledMessage = 1 << 2
 		};
 
 		struct GrabData
@@ -390,29 +393,29 @@ namespace RE
 			bool dragonRideTargetLocked: 1;         // 5:2
 			bool everModded: 1;                     // 5:3
 			bool servingJailTime: 1;                // 5:4 - Briefly set
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 			bool          pad5_5: 3;  // 5:5
 			std::uint16_t pad6;       // 6
 #else
-			bool unk5_5: 1;  // 5:5
-			bool unk5_6: 1;  // 5:6
-			bool unk5_7: 1;  // 5:7
-			bool unk6_0: 1;  // 6:0
-			bool unk6_1: 1;  // 6:1
-			bool unk6_2: 1;  // 6:2
-			bool unk6_3: 1;  // 6:3
-			bool unk6_4: 1;  // 6:4
-			bool unk6_5: 1;  // 6:5
-			bool unk6_6: 1;  // 6:6
-			bool unk6_7: 1;  // 6:7
-			bool unk7_0: 1;  // 7:0
-			bool unk7_1: 1;  // 7:1
-			bool unk7_2: 1;  // 7:2
-			bool unk7_3: 1;  // 7:3
-			bool unk7_4: 1;  // 7:4
-			bool unk7_5: 1;  // 7:5
-			bool unk7_6: 1;  // 7:6
-			bool unk7_7: 1;  // 7:7
+			bool unk5_5: 1;                                                                // 5:5
+			bool unk5_6: 1;                                                                // 5:6
+			bool unk5_7: 1;                                                                // 5:7
+			bool unk6_0: 1;                                                                // 6:0
+			bool unk6_1: 1;                                                                // 6:1
+			bool unk6_2: 1;                                                                // 6:2
+			bool unk6_3: 1;                                                                // 6:3
+			bool unk6_4: 1;                                                                // 6:4
+			bool unk6_5: 1;                                                                // 6:5
+			bool unk6_6: 1;                                                                // 6:6
+			bool unk6_7: 1;                                                                // 6:7
+			bool unk7_0: 1;                                                                // 7:0
+			bool unk7_1: 1;                                                                // 7:1
+			bool unk7_2: 1;                                                                // 7:2
+			bool unk7_3: 1;                                                                // 7:3
+			bool unk7_4: 1;                                                                // 7:4
+			bool unk7_5: 1;                                                                // 7:5
+			bool unk7_6: 1;                                                                // 7:6
+			bool unk7_7: 1;                                                                // 7:7
 #endif
 		};
 		static_assert(sizeof(PlayerFlags) == 0x8);
@@ -425,39 +428,6 @@ namespace RE
 			TESObjectWEAP* leftHandWeapon;   // 08
 		};
 		static_assert(sizeof(QueuedWeapon) == 0x10);
-
-		struct TeleportPath  // TODO: Should not be in Player class. Gets used in Pathing and other non-player areas
-		{
-		public:
-			struct Unk00Data
-			{
-			public:
-				// members
-				bool           unk00;         // 00 - Determines whether to use worldspace or cell?
-				char           pad01[7];      // 01
-				TESWorldSpace* worldspace;    // 08
-				TESObjectCELL* interiorCell;  // 10
-			};
-			static_assert(sizeof(Unk00Data) == 0x18);
-
-			struct Unk18Data
-			{
-			public:
-				// members
-				RE::TESObjectREFR* unk00;  // 00
-				std::uint64_t      unk08;  // 08
-				std::uint64_t      unk10;  // 10
-			};
-			static_assert(sizeof(Unk18Data) == 0x18);
-
-			// members
-			BSTArray<Unk00Data> unk00;  // 00
-			BSTArray<Unk18Data> unk18;  // 18
-			std::uint64_t       unk30;  // 30
-			std::uint64_t       unk38;  // 38
-			std::uint64_t       unk40;  // 40
-		};
-		static_assert(sizeof(TeleportPath) == 0x48);
 
 		struct PreTransformationData
 		{
@@ -493,13 +463,13 @@ namespace RE
 
 		struct GameStateData
 		{
-#define GAME_STATE_DATA_CONTENT                                            \
-	std::int32_t                                  difficulty;      /* 0 */ \
-	ActorHandle                                   assumedIdentity; /* 4 */ \
-	std::int8_t                                   murder;          /* 8 */ \
-	std::int8_t                                   perkCount;       /* 9 */ \
-	stl::enumeration<ByCharGenFlag, std::uint8_t> byCharGenFlag;   /* A */ \
-	std::uint8_t                                  padB;            /* B */
+#define GAME_STATE_DATA_CONTENT                                        \
+	std::int32_t                              difficulty;      /* 0 */ \
+	ActorHandle                               assumedIdentity; /* 4 */ \
+	std::int8_t                               murder;          /* 8 */ \
+	std::int8_t                               perkCount;       /* 9 */ \
+	REX::EnumSet<ByCharGenFlag, std::uint8_t> byCharGenFlag;   /* A */ \
+	std::uint8_t                              padB;            /* B */
 
 			GAME_STATE_DATA_CONTENT
 		};
@@ -563,6 +533,7 @@ namespace RE
 		};
 		static_assert(sizeof(PlayerSkills) == 0x8);
 
+#pragma pack(push, 4)
 		struct INFO_RUNTIME_DATA
 		{
 #define INFO_RUNTIME_DATA_CONTENT                                                                                     \
@@ -618,7 +589,8 @@ namespace RE
 
 			INFO_RUNTIME_DATA_CONTENT
 		};
-		static_assert(sizeof(INFO_RUNTIME_DATA) == 0x140);
+		static_assert(sizeof(INFO_RUNTIME_DATA) == 0x13C);
+#pragma pack(pop)
 
 		struct VR_INFO_RUNTIME_DATA
 		{
@@ -680,9 +652,9 @@ namespace RE
 		~PlayerCharacter() override;  // 000
 
 		// override
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 		void RemoveWeapon(BIPED_OBJECT equipIndex) override;  // 82
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 		void AttachWeapon(RE::TESObjectWEAP* a_weapon, bool attachToShieldHand) override;  // 82
 		void RemoveWeapon(BIPED_OBJECT equipIndex) override;                               // 83
 #else
@@ -866,19 +838,19 @@ namespace RE
 	GrabData                                                grabData;                                 /* 898 */             \
 	std::uint32_t                                           unk8e0;                                   /* 8e0 */             \
 	INFO_RUNTIME_DATA_CONTENT;                                                                        /* 8E4 */             \
-	std::uint8_t                                   unkA20[0xA0];                                      /* A20 */             \
-	std::uint32_t                                  unkAC0;                                            /* AC0 */             \
-	std::uint32_t                                  unkAC4;                                            /* AC4 */             \
-	BGSLocation*                                   currentLocation;                                   /* AC8 */             \
-	AITimeStamp                                    cachedVelocityTimeStamp;                           /* AD0 */             \
-	float                                          telekinesisDistance;                               /* AD4 */             \
-	float                                          commandTimer;                                      /* AD8 */             \
-	float                                          sunGazeTimer;                                      /* ADC */             \
-	TESImageSpaceModifier*                         sunGazeImageModifierSpace;                         /* AE0 */             \
-	ActorValue                                     advanceSkill;                                      /* AE8 */             \
-	std::uint32_t                                  advanceAction;                                     /* AEC */             \
-	stl::enumeration<DEFAULT_OBJECT, std::int32_t> animationObjectAction;                             /* AF0 */             \
-	stl::enumeration<GrabbingType, std::uint32_t>  grabType;                                          /* AF4 */             \
+	std::uint8_t                               unkA20[0xA0];                                          /* A20 */             \
+	std::uint32_t                              unkAC0;                                                /* AC0 */             \
+	std::uint32_t                              unkAC4;                                                /* AC4 */             \
+	BGSLocation*                               currentLocation;                                       /* AC8 */             \
+	AITimeStamp                                cachedVelocityTimeStamp;                               /* AD0 */             \
+	float                                      telekinesisDistance;                                   /* AD4 */             \
+	float                                      commandTimer;                                          /* AD8 */             \
+	float                                      sunGazeTimer;                                          /* ADC */             \
+	TESImageSpaceModifier*                     sunGazeImageSpaceModifier;                             /* AE0 */             \
+	ActorValue                                 advanceSkill;                                          /* AE8 */             \
+	std::uint32_t                              advanceAction;                                         /* AEC */             \
+	REX::EnumSet<DEFAULT_OBJECT, std::int32_t> animationObjectAction;                                 /* AF0 */             \
+	REX::EnumSet<GrabbingType, std::uint32_t>  grabType;                                              /* AF4 */             \
 	GAME_STATE_DATA_CONTENT;                                                                          /* AF8 */             \
 	std::uint32_t        unkB04;                                                                      /* B04 */             \
 	Crime*               resistArrestCrime;                                                           /* B08 */             \
@@ -895,7 +867,7 @@ namespace RE
 	std::int32_t            unkB88;                                                                   /* B88 */             \
 	std::uint32_t           padB8C;                                                                   /* B8C */             \
 	std::uint64_t           unkB90;                                                                   /* B90 */             \
-	TESBoundObject*         unkB98;                                                                   /* B98 */             \
+	InventoryEntryData*     temperingItem;                                                            /* B98 */             \
 	BSTSmallArray<void*, 4> unkBA0;                                                                   /* BA0 */             \
 	PreTransformationData*  preTransformationData;                                                    /* BD0 */             \
 	PlayerFlags             playerFlags;                                                              /* BD8 */
@@ -986,18 +958,18 @@ namespace RE
 	float                                                   unkFloatFD4;                              /* FD4 */                                                                                                        \
 	std::uint64_t                                           unkFD8;                                   /* FD8 */                                                                                                        \
 	VR_INFO_RUNTIME_DATA_CONTENT;                                                                     /* FE0 */                                                                                                        \
-	std::uint8_t                                   unk1120[0xA0];                                     /* 1120 - Unused? */                                                                                             \
-	std::uint32_t                                  unkAC0;                                            /* 11C0 */                                                                                                       \
-	std::uint32_t                                  unkAC4;                                            /* 11C4 */                                                                                                       \
-	BGSLocation*                                   currentLocation;                                   /* 11C8 */                                                                                                       \
-	AITimeStamp                                    cachedVelocityTimeStamp;                           /* 11D0 */                                                                                                       \
-	float                                          telekinesisDistance;                               /* 11D4 */                                                                                                       \
-	float                                          commandTimer;                                      /* 11D8 */                                                                                                       \
-	float                                          sunGazeTimer;                                      /* 11DC - Upon sungazing, counts down from 0.5 seconds. When 0, applies imagespace modifier */                   \
-	TESImageSpaceModifier*                         sunGazeImageSpaceModifier;                         /* 11E0 */                                                                                                       \
-	ActorValue                                     advanceSkill;                                      /* 11E8 - advance values set, then cleared in PlayerSkills::ModSkillPoints surronding ApplyPerkEntry */          \
-	std::uint32_t                                  advanceAction;                                     /* 11EC - Part of 10F0 and 11E8 */                                                                               \
-	stl::enumeration<DEFAULT_OBJECT, std::int32_t> animationObjectAction;                             /* 11F0 */                                                                                                       \
+	std::uint8_t                               unk1120[0xA0];                                         /* 1120 - Unused? */                                                                                             \
+	std::uint32_t                              unkAC0;                                                /* 11C0 */                                                                                                       \
+	std::uint32_t                              unkAC4;                                                /* 11C4 */                                                                                                       \
+	BGSLocation*                               currentLocation;                                       /* 11C8 */                                                                                                       \
+	AITimeStamp                                cachedVelocityTimeStamp;                               /* 11D0 */                                                                                                       \
+	float                                      telekinesisDistance;                                   /* 11D4 */                                                                                                       \
+	float                                      commandTimer;                                          /* 11D8 */                                                                                                       \
+	float                                      sunGazeTimer;                                          /* 11DC - Upon sungazing, counts down from 0.5 seconds. When 0, applies imagespace modifier */                   \
+	TESImageSpaceModifier*                     sunGazeImageSpaceModifier;                             /* 11E0 */                                                                                                       \
+	ActorValue                                 advanceSkill;                                          /* 11E8 - advance values set, then cleared in PlayerSkills::ModSkillPoints surronding ApplyPerkEntry */          \
+	std::uint32_t                              advanceAction;                                         /* 11EC - Part of 10F0 and 11E8 */                                                                               \
+	REX::EnumSet<DEFAULT_OBJECT, std::int32_t> animationObjectAction;                                 /* 11F0 */                                                                                                       \
 	GAME_STATE_DATA_CONTENT;                                                                          /* 11F4 */                                                                                                       \
 	Crime*               resistArrestCrime;                                                           /* 1200 */                                                                                                       \
 	BSTArray<TintMask*>  tintMasks;                                                                   /* 1208 */                                                                                                       \
@@ -1021,12 +993,12 @@ namespace RE
 
 		[[nodiscard]] inline VR_PLAYER_RUNTIME_DATA& GetVRPlayerRuntimeData() noexcept
 		{
-			return REL::RelocateMember<VR_PLAYER_RUNTIME_DATA>(this, 0, 0x3E0);
+			return REL::RelocateMember<VR_PLAYER_RUNTIME_DATA>(this, 0, 0x3D8);
 		}
 
 		[[nodiscard]] inline const VR_PLAYER_RUNTIME_DATA& GetVRPlayerRuntimeData() const noexcept
 		{
-			return REL::RelocateMember<VR_PLAYER_RUNTIME_DATA>(this, 0, 0x3E0);
+			return REL::RelocateMember<VR_PLAYER_RUNTIME_DATA>(this, 0, 0x3D8);
 		}
 
 		[[nodiscard]] inline CrimeValue& GetCrimeValue() noexcept
@@ -1093,7 +1065,7 @@ namespace RE
 		{
 			if SKYRIM_REL_CONSTEXPR (REL::Module::IsAE()) {
 				if (REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_629) != std::strong_ordering::less) {
-					return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8D8);
+					return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8EC);
 				}
 			}
 			return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8E4, 0);
@@ -1103,7 +1075,7 @@ namespace RE
 		{
 			if SKYRIM_REL_CONSTEXPR (REL::Module::IsAE()) {
 				if (REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_629) != std::strong_ordering::less) {
-					return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8DC);
+					return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8EC);
 				}
 			}
 			return REL::RelocateMember<INFO_RUNTIME_DATA>(this, 0x8E4, 0);
@@ -1145,22 +1117,25 @@ namespace RE
 		}
 
 		// members
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 		PLAYER_RUNTIME_DATA_CONTENT
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 		VR_PLAYER_RUNTIME_DATA_CONTENT
-#elif (!defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)) || (!defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_VR))
 #endif
 
 	private:
 		bool CenterOnCell_Impl(const char* a_cellName, RE::TESObjectCELL* a_cell);
 	};
-#if !defined(ENABLE_SKYRIM_VR)
-	static_assert(sizeof(PlayerCharacter) == 0x880);
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
-	static_assert(sizeof(PlayerCharacter) == 0x12D8);
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+#	if defined(EXCLUSIVE_SKYRIM_SE)
+	static_assert(sizeof(PlayerCharacter) == 0xBE0);
+#	else
+	static_assert(sizeof(PlayerCharacter) == 0x9A8);
+#	endif
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+	static_assert(sizeof(PlayerCharacter) == 0x12F0);
 #else
-	static_assert(sizeof(PlayerCharacter) == 0x78);
+	static_assert(sizeof(PlayerCharacter) == 0x1A0);
 #endif
 }
 #undef PLAYER_RUNTIME_DATA_CONTENT

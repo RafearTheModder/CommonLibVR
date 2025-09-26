@@ -31,14 +31,14 @@ namespace RE
 		{
 		public:
 			// members
-			BSFixedString                           eventID;             // 00
-			std::uint16_t                           inputKey;            // 08
-			std::uint16_t                           modifier;            // 08
-			std::int8_t                             indexInContext;      // 0C
-			bool                                    remappable;          // 0D
-			bool                                    linked;              // 0E
-			stl::enumeration<UEFlag, std::uint32_t> userEventGroupFlag;  // 10
-			std::uint32_t                           pad14;               // 14
+			BSFixedString                       eventID;             // 00
+			std::uint16_t                       inputKey;            // 08
+			std::uint16_t                       modifier;            // 08
+			std::int8_t                         indexInContext;      // 0C
+			bool                                remappable;          // 0D
+			bool                                linked;              // 0E
+			REX::EnumSet<UEFlag, std::uint32_t> userEventGroupFlag;  // 10
+			std::uint32_t                       pad14;               // 14
 		};
 		static_assert(sizeof(UserEventMapping) == 0x18);
 
@@ -92,6 +92,7 @@ namespace RE
 		constexpr bool            IsActivateControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kActivate); }
 		constexpr bool            IsConsoleControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kConsole); }
 		constexpr bool            IsFightingControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kFighting); }
+		constexpr bool            IsJumpingControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kJumping); }
 		constexpr bool            IsLookingControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kLooking); }
 		constexpr bool            IsMenuControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kMenu); }
 		constexpr bool            IsMainFourControlsEnabled() const noexcept { return GetRuntimeData().enabledControls.all(UEFlag::kMainFour); }
@@ -106,16 +107,16 @@ namespace RE
 
 		struct RUNTIME_DATA
 		{
-#define RUNTIME_DATA_CONTENT                                                                        \
-	BSTArray<LinkedMapping>                          linkedMappings;               /* 0E8, VR 108*/ \
-	BSTArray<InputContextID>                         contextPriorityStack;         /* 100, VR 120*/ \
-	stl::enumeration<UEFlag, std::uint32_t>          enabledControls;              /* 118, VR 138*/ \
-	stl::enumeration<UEFlag, std::uint32_t>          unk11C;                       /* 11C, VR 13C*/ \
-	std::int8_t                                      textEntryCount;               /* 120, VR 140*/ \
-	bool                                             ignoreKeyboardMouse;          /* 121, VR 141*/ \
-	bool                                             ignoreActivateDisabledEvents; /* 122, VR 142*/ \
-	std::uint8_t                                     pad123;                       /* 123, VR 143*/ \
-	stl::enumeration<PC_GAMEPAD_TYPE, std::uint32_t> gamePadMapType;               /* 124, VR 144*/
+#define RUNTIME_DATA_CONTENT                                                                    \
+	BSTArray<LinkedMapping>                      linkedMappings;               /* 0E8, VR 108*/ \
+	BSTArray<InputContextID>                     contextPriorityStack;         /* 100, VR 120*/ \
+	REX::EnumSet<UEFlag, std::uint32_t>          enabledControls;              /* 118, VR 138*/ \
+	REX::EnumSet<UEFlag, std::uint32_t>          unk11C;                       /* 11C, VR 13C*/ \
+	std::int8_t                                  textEntryCount;               /* 120, VR 140*/ \
+	bool                                         ignoreKeyboardMouse;          /* 121, VR 141*/ \
+	bool                                         ignoreActivateDisabledEvents; /* 122, VR 142*/ \
+	std::uint8_t                                 pad123;                       /* 123, VR 143*/ \
+	REX::EnumSet<PC_GAMEPAD_TYPE, std::uint32_t> gamePadMapType;               /* 124, VR 144*/
 			RUNTIME_DATA_CONTENT
 		};
 		static_assert(sizeof(RUNTIME_DATA) == 0x40);
@@ -123,16 +124,16 @@ namespace RE
 		//members
 
 		// members
-		InputContext* controlMap[InputContextID::kTotal];        // 060
-#if !defined(ENABLE_SKYRIM_VR)                                   //flat
-#	if !defined(ENABLE_SKYRIM_AE) && defined(ENABLE_SKYRIM_SE)  // SSE
-		RUNTIME_DATA_CONTENT;                                    // 0E8
-#	else                                                        // AE
+		InputContext* controlMap[InputContextID::kTotal];  // 060
+#if defined(EXCLUSIVE_SKYRIM_FLAT)                         // FLAT
+#	if defined(EXCLUSIVE_SKYRIM_SE)                       // SSE
+		RUNTIME_DATA_CONTENT;                              // 0E8
+#	else                                                  // AE
 		RUNTIME_DATA_CONTENT;  // 0F8
 #	endif
-#elif !defined(ENABLE_SKYRIM_AE) && defined(ENABLE_SKYRIM_SE)  // VR
+#elif defined(EXCLUSIVE_SKYRIM_VR)  // VR
 		RUNTIME_DATA_CONTENT;  // 108
-#else                                                          // ALL
+#else                               // ALL
 		// controlMap can be accessed up to kTotal, kAETotal, or kVRTotal based on runtime
 #endif
 
@@ -156,14 +157,16 @@ namespace RE
 			return REL::RelocateMember<RUNTIME_DATA>(this, 0xE8, 0x108);
 		}
 	};
-#if !defined(ENABLE_SKYRIM_VR)
-#	if !defined(ENABLE_SKYRIM_AE)
-	static_assert(sizeof(ControlMap) == 0x130);
-#	elif !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+#	if defined(EXCLUSIVE_SKYRIM_SE)
 	static_assert(sizeof(ControlMap) == 0x128);
+#	else
+	static_assert(sizeof(ControlMap) == 0x130);
 #	endif
-#elif !defined(ENABLE_SKYRIM_SE) && !defined(ENABLE_SKYRIM_AE)
-	//static_assert(sizeof(ControlMap) == 0x148);  // VS seems to choke even though this should be right
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+	static_assert(sizeof(ControlMap) == 0x128);
+#else
+	static_assert(sizeof(ControlMap) == 0xE8);
 #endif
 }
 #undef RUNTIME_DATA_CONTENT

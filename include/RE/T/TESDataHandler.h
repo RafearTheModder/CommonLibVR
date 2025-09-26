@@ -65,7 +65,10 @@ namespace RE
 		const TESFile*               LookupLoadedLightModByIndex(std::uint16_t a_index);
 		std::optional<std::uint16_t> GetLoadedLightModIndex(std::string_view a_modName);
 
-		bool IsGeneratedID(FormID a_formID);
+		TESWorldSpace* GetExtCellDataFromFileByEditorID(const char* a_cellID, std::int32_t& a_outX, std::int32_t& a_outY);
+
+		bool   IsGeneratedID(FormID a_formID);
+		FormID GetNextID();
 
 		BSTArray<TESForm*>& GetFormArray(FormType a_formType);
 		template <class T>
@@ -145,12 +148,12 @@ namespace RE
 			}
 		}
 
-		[[nodiscard]] inline std::uint8_t GetLoadedLightModCount() const noexcept
+		[[nodiscard]] inline std::uint16_t GetLoadedLightModCount() const noexcept
 		{
 			if SKYRIM_REL_CONSTEXPR (REL::Module::IsVR()) {
-				return (!VRcompiledFileCollection) ? 0 : static_cast<std::uint8_t>(VRcompiledFileCollection->smallFiles.size());
+				return (!VRcompiledFileCollection) ? 0 : static_cast<std::uint16_t>(VRcompiledFileCollection->smallFiles.size());
 			} else {
-				return static_cast<std::uint8_t>(REL::RelocateMember<const TESFileCollection>(this, 0xD70, 0).smallFiles.size());
+				return static_cast<std::uint16_t>(REL::RelocateMember<const TESFileCollection>(this, 0xD70, 0).smallFiles.size());
 			}
 		}
 
@@ -188,7 +191,7 @@ namespace RE
 		std::uint32_t                     padD54;                                         // D54
 		TESFile*                          activeFile;                                     // D58
 		BSSimpleList<TESFile*>            files;                                          // D60
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 		TESFileCollection compiledFileCollection;  // D70
 		RUNTIME_DATA_CONTENT
 		std::uint8_t          unkDAA;             // DAA
@@ -196,7 +199,7 @@ namespace RE
 		std::uint32_t         padDAC;             // DAC
 		TESRegionDataManager* regionDataManager;  // DB0
 		InventoryChanges*     merchantInventory;  // DB8
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 		std::uint32_t loadedModCount;    // D70 this should be avoided if SkyrimVRESL is available
 		std::uint32_t pad14;             // D74
 		TESFile*      loadedMods[0xFF];  // D78 this should be avoided if SkyrimVRESL is available

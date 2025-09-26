@@ -9,10 +9,12 @@
 namespace RE
 {
 	class ButtonEvent :
-#if !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_VR)
 		public VRWandEvent
-#else
+#elif !defined(ENABLE_SKYRIM_VR)
 		public IDEvent
+#else
+		public InputEvent  // Multi-runtime: inherit from common base class
 #endif
 	{
 	public:
@@ -39,8 +41,8 @@ namespace RE
 					buttonEvent->device = a_inputDevice;
 					buttonEvent->eventType = INPUT_EVENT_TYPE::kButton;
 					buttonEvent->next = nullptr;
-					buttonEvent->userEvent = a_userEvent;
-					buttonEvent->idCode = a_idCode;
+					buttonEvent->SetUserEvent(a_userEvent);
+					buttonEvent->SetIDCode(a_idCode);
 					buttonEvent->GetRuntimeData().value = a_value;
 					buttonEvent->GetRuntimeData().heldDownSecs = a_heldDownSecs;
 				}
@@ -72,7 +74,7 @@ namespace RE
 
 		[[nodiscard]] VRWandEvent* AsVRWandEvent() noexcept
 		{
-			if (!REL::Module::IsVR()) {
+			if SKYRIM_REL_CONSTEXPR (!REL::Module::IsVR()) {
 				return nullptr;
 			}
 			return &REL::RelocateMember<VRWandEvent>(this, 0, 0);
@@ -83,15 +85,67 @@ namespace RE
 			return const_cast<ButtonEvent*>(this)->AsVRWandEvent();
 		}
 
+		[[nodiscard]] IDEvent* AsIDEvent() noexcept
+		{
+#if defined(EXCLUSIVE_SKYRIM_VR)
+			// VR builds: ButtonEvent inherits from VRWandEvent which inherits from IDEvent
+			return static_cast<IDEvent*>(static_cast<VRWandEvent*>(this));
+#elif !defined(ENABLE_SKYRIM_VR)
+			// SE/AE builds: ButtonEvent inherits directly from IDEvent
+			return static_cast<IDEvent*>(this);
+#else
+			// Multi-runtime builds: Cannot use static_cast since ButtonEvent only inherits from InputEvent
+			// Use RelocateMember to access IDEvent data at runtime-specific offsets
+			return &REL::RelocateMember<IDEvent>(this, 0, 0);
+#endif
+		}
+
+		[[nodiscard]] const IDEvent* AsIDEvent() const noexcept
+		{
+			return const_cast<ButtonEvent*>(this)->AsIDEvent();
+		}
+
+		// Accessor functions for compatibility with existing code
+		[[nodiscard]] std::uint32_t GetIDCode() const noexcept
+		{
+			if (auto idEvent = AsIDEvent()) {
+				return idEvent->idCode;
+			}
+			return 0;
+		}
+
+		void SetIDCode(std::uint32_t a_idCode)
+		{
+			if (auto idEvent = AsIDEvent()) {
+				idEvent->idCode = a_idCode;
+			}
+		}
+
+		[[nodiscard]] const BSFixedString& GetUserEvent() const noexcept
+		{
+			if (auto idEvent = AsIDEvent()) {
+				return idEvent->userEvent;
+			}
+			static BSFixedString empty;
+			return empty;
+		}
+
+		void SetUserEvent(const BSFixedString& a_userEvent)
+		{
+			if (auto idEvent = AsIDEvent()) {
+				idEvent->userEvent = a_userEvent;
+			}
+		}
+
 	private:
 		KEEP_FOR_RE()
 	};
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 	static_assert(sizeof(ButtonEvent) == 0x30);
-#elif !defined(ENABLE_SKYRIM_SE) && !defined(ENABLE_SKYRIM_AE)
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 	static_assert(sizeof(ButtonEvent) == 0x38);
 #else
-	static_assert(sizeof(ButtonEvent) == 0x28);
+	static_assert(sizeof(ButtonEvent) == 0x18);
 #endif
 }
 #undef RUNTIME_DATA_CONTENT

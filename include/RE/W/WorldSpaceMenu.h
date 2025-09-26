@@ -33,7 +33,7 @@ namespace RE
 #endif
 	{
 	public:
-#if !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_VR)
 		inline static constexpr auto RTTI = RTTI_WorldSpaceMenu;
 #endif
 		WorldSpaceMenu(bool a_registerHudModeChangeEvent, bool a_matchAsTopMenu, bool a_queueUpdateFixup);
@@ -57,7 +57,7 @@ namespace RE
 		virtual void               PostCreate() override;                          // 02
 		virtual UI_MESSAGE_RESULTS ProcessMessage(UIMessage& a_message) override;  // 04
 #ifdef ENABLE_SKYRIM_VR
-		virtual void               Unk_09(UI_MENU_Unk09 a_unk) override;           // 09
+		virtual void Unk_09(UI_MENU_Unk09 a_unk) override;  // 09
 #endif
 
 		// add
@@ -79,7 +79,11 @@ namespace RE
 	private:
 		KEEP_FOR_RE()
 	};
-#if !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+	static_assert(sizeof(WorldSpaceMenu) == 0x48);
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 	static_assert(sizeof(WorldSpaceMenu) == 0x58);
+#else
+	static_assert(sizeof(WorldSpaceMenu) == 0x40);
 #endif
 }

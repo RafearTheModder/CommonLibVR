@@ -23,6 +23,8 @@ namespace RE
 	class ImageSpaceModifierInstance;
 	class NavMeshInfoMap;
 	class NiAVObject;
+	class NiDirectionalLight;
+	class NiFogProperty;
 	class NiNode;
 	class Sky;
 	class TESLandTexture;
@@ -41,11 +43,13 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_TES;
+		inline static constexpr auto VTABLE = VTABLE_TES;
 
 		class SystemEventAdapter : public BSTEventSink<BSSystemEvent>
 		{
 		public:
 			inline static constexpr auto RTTI = RTTI_TES;
+			inline static constexpr auto VTABLE = VTABLE_TES;
 
 			~SystemEventAdapter() override;  // 00
 
@@ -67,6 +71,8 @@ namespace RE
 
 		static TES* GetSingleton();
 
+		void ForEachCell(std::function<void(TESObjectCELL*)> a_callback);
+		void ForEachCellInRange(TESObjectREFR* a_origin, float a_radius, std::function<void(TESObjectCELL*)> a_callback);
 		void ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback);
 		void ForEachReferenceInRange(TESObjectREFR* a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback);
 
@@ -96,6 +102,7 @@ namespace RE
 	std::uint64_t unk138;          /* 138 */
 			RUNTIME_DATA_CONTENT
 		};
+		static_assert(sizeof(RUNTIME_DATA) == 0x18);
 
 		// 1130 and later
 		struct AE_RUNTIME_DATA
@@ -109,6 +116,7 @@ namespace RE
 	std::uint64_t unk140;          /* 140 - actual offset change is somewhere near showLandBorder */
 			AE_RUNTIME_DATA_CONTENT
 		};
+		static_assert(sizeof(AE_RUNTIME_DATA) == 0x20);
 
 		struct RUNTIME_DATA2
 		{
@@ -160,6 +168,7 @@ namespace RE
 	std::uint64_t                                   unk2B0;     /* 2B0 */
             RUNTIME_DATA2_CONTENT
 		};
+		static_assert(sizeof(RUNTIME_DATA2) == 0x178);
 
 		[[nodiscard]] inline RUNTIME_DATA* GetRuntimeData() noexcept
 		{
@@ -193,7 +202,7 @@ namespace RE
 
 		[[nodiscard]] inline const AE_RUNTIME_DATA& GetAERuntimeData() const noexcept
 		{
-			return this->GetAERuntimeData();
+			return *const_cast<TES*>(this)->GetAERuntimeData();
 		}
 
 		[[nodiscard]] inline RUNTIME_DATA2& GetRuntimeData2() noexcept
@@ -213,16 +222,18 @@ namespace RE
 		NiNode*                                             lodLandRoot;                // 088
 		NiNode*                                             objLODWaterRoot;            // 090
 		BSTempNodeManager*                                  tempNodeManager;            // 098
-		std::uint64_t                                       unk0A0;                     // 0A0
-		std::uint64_t                                       unk0A8;                     // 0A8
-		std::uint32_t                                       unk0B0;                     // 0B0
-		std::uint32_t                                       unk0B4;                     // 0B4
-		std::uint64_t                                       unk0B8;                     // 0B8
+		NiDirectionalLight*                                 objLight;                   // 0A0
+		NiFogProperty*                                      objFog;                     // 0A8
+		std::int32_t                                        currentGridX;               // 0B0
+		std::int32_t                                        currentGridY;               // 0B4
+		std::int32_t                                        currentQueuedX;             // 0B8
+		std::int32_t                                        currentQueuedY;             // 0BC
 		TESObjectCELL*                                      interiorCell;               // 0C0
 		TESObjectCELL**                                     interiorBuffer;             // 0C8
 		TESObjectCELL**                                     exteriorBuffer;             // 0D0
 		std::uint64_t                                       unk0D8;                     // 0D8
-		std::uint64_t                                       unk0E0;                     // 0E0
+		std::int32_t                                        saveGridX;                  // 0E0
+		std::int32_t                                        saveGridY;                  // 0E0
 		std::uint64_t                                       unk0E8;                     // 0E8
 		std::uint64_t                                       unk0F0;                     // 0F0
 		std::uint64_t                                       unk0F8;                     // 0F8
@@ -230,20 +241,22 @@ namespace RE
 		BSSimpleList<NiPointer<ImageSpaceModifierInstance>> activeImageSpaceModifiers;  // 108
 		std::uint64_t                                       unk118;                     // 118
 		std::uint64_t                                       unk120;                     // 120
-#if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
-		AE_RUNTIME_DATA_CONTENT;
-#else
-		RUNTIME_DATA_CONTENT;
+#ifndef ENABLE_SKYRIM_AE
+		RUNTIME_DATA_CONTENT;   // 128
+		RUNTIME_DATA2_CONTENT;  // 140
+#elif !defined(ENABLE_SKYRIM_VR) && !defined(ENABLE_SKYRIM_SE)
+		AE_RUNTIME_DATA_CONTENT;  // 128
+		RUNTIME_DATA2_CONTENT;    // 148
 #endif
-		RUNTIME_DATA2_CONTENT;
-
 	private:
 		KEEP_FOR_RE()
 	};
-#if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
+#ifndef ENABLE_SKYRIM_AE
+	static_assert(sizeof(TES) == 0x2B8);
+#elif !defined(ENABLE_SKYRIM_VR) && !defined(ENABLE_SKYRIM_SE)
 	static_assert(sizeof(TES) == 0x2C0);
 #else
-	static_assert(sizeof(TES) == 0x2B8);
+	static_assert(sizeof(TES) == 0x128);
 #endif
 }
 #undef RUNTIME_DATA_CONTENT

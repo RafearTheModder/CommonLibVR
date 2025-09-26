@@ -98,13 +98,13 @@ namespace RE
 				void SetCallableFromTasklets1(const char* a_className, const char* a_stateName, const char* a_fnName, bool a_callable) override;                     // 19
 				void SetCallableFromTasklets2(const char* a_className, const char* a_fnName, bool a_callable) override;                                              // 1A - { SetCallableFromTasklets1(a_className, 0, a_fnName, a_callable); }
 				// This is where the vtable differs between AE/SE and VR.
-#if !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_VR)
 				void New_1B(void) override;
 #endif
 #ifndef SKYRIM_CROSS_VR
 				void ForEachBoundObject(VMHandle a_handle, IForEachScriptObjectFunctor* a_functor) override;  // 1B, 1C
 #endif
-#if !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#if defined(EXCLUSIVE_SKYRIM_VR)
 				void New_1D(void) override;
 #endif
 #ifndef SKYRIM_CROSS_VR
@@ -215,7 +215,7 @@ namespace RE
 				std::uint32_t                                               pad938C;                     // 938C
 				BSScript::Stack*                                            frozenStacks;                // 9390
 				std::uint32_t                                               frozenStacksCount;           // 9398
-				stl::enumeration<FreezeState, std::uint32_t>                freezeState;                 // 939C
+				REX::EnumSet<FreezeState, std::uint32_t>                    freezeState;                 // 939C
 				mutable BSSpinLock                                          attachedScriptsLock;         // 93A0
 				BSTHashMap<VMHandle, BSTSmallSharedArray<AttachedScript>>   attachedScripts;             // 93A8
 				std::uint32_t                                               unk93D8;                     // 93D8
@@ -242,9 +242,7 @@ namespace RE
 			private:
 				KEEP_FOR_RE()
 			};
-#if !defined(ENABLE_SKYRIM_VR)
-			//static_assert(sizeof(VirtualMachine) == 0x9518);
-#endif
+			static_assert(sizeof(VirtualMachine) == 0x9518);
 		}
 	}
 }

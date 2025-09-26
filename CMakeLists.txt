@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 
+option(REX_OPTION_INI "Enables ini config support for REX." OFF)
+option(REX_OPTION_JSON "Enables json config support for REX." OFF)
+option(REX_OPTION_TOML "Enables toml config support for REX." OFF)
 option(SKSE_SUPPORT_XBYAK "Enables trampoline support for Xbyak." OFF)
 option(ENABLE_SKYRIM_SE "Enable support for Skyrim SE in the dynamic runtime feature." ON)
 option(ENABLE_SKYRIM_AE "Enable support for Skyrim AE in the dynamic runtime feature." ON)
@@ -62,11 +65,16 @@ target_compile_definitions(
 	PUBLIC
 	WINVER=0x0601 # windows 7, minimum supported version by skyrim special edition
 	_WIN32_WINNT=0x0601
+	"$<$<BOOL:${REX_OPTION_INI}>:REX_OPTION_INI=1>"
+	"$<$<BOOL:${REX_OPTION_JSON}>:REX_OPTION_JSON=1>"
+	"$<$<BOOL:${REX_OPTION_TOML}>:REX_OPTION_TOML=1>"
 	"$<$<BOOL:${SKSE_SUPPORT_XBYAK}>:SKSE_SUPPORT_XBYAK=1>"
 	"$<$<BOOL:${ENABLE_SKYRIM_SE}>:ENABLE_SKYRIM_SE=1>"
 	"$<$<BOOL:${ENABLE_SKYRIM_AE}>:ENABLE_SKYRIM_AE=1>"
 	"$<$<BOOL:${ENABLE_SKYRIM_VR}>:ENABLE_SKYRIM_VR=1>"
-	HAS_SKYRIM_MULTI_TARGETING=1
+	"$<$<AND:$<BOOL:${ENABLE_SKYRIM_SE}>,$<BOOL:${ENABLE_SKYRIM_AE}>>:HAS_SKYRIM_MULTI_TARGETING=1>"
+	"$<$<AND:$<BOOL:${ENABLE_SKYRIM_SE}>,$<BOOL:${ENABLE_SKYRIM_VR}>>:HAS_SKYRIM_MULTI_TARGETING=1>"
+	"$<$<AND:$<BOOL:${ENABLE_SKYRIM_AE}>,$<BOOL:${ENABLE_SKYRIM_VR}>>:HAS_SKYRIM_MULTI_TARGETING=1>"
 )
 
 target_compile_features(
@@ -109,6 +117,7 @@ if(MSVC)
 endif()
 
 set(OPENVR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/headers)
+set(OPENVR_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/lib/win64)
 target_include_directories(
 	"${PROJECT_NAME}"
 	PUBLIC
@@ -135,12 +144,14 @@ target_link_libraries(
 	spdlog::spdlog
 	Microsoft::DirectXTK
 	Advapi32.lib
+	bcrypt.lib
 	D3D11.lib
 	d3dcompiler.lib
 	Dbghelp.lib
 	DXGI.lib
 	Ole32.lib
 	Version.lib
+	"$<$<BOOL:${ENABLE_SKYRIM_VR}>:${OPENVR_LIB_DIR}/openvr_api.lib>"
 )
 
 target_precompile_headers(

@@ -100,23 +100,13 @@ namespace SKSE
 
 		bool WriteRecord(std::uint32_t a_type, std::uint32_t a_version, const void* a_buf, std::uint32_t a_length) const;
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::negation_v<
-					std::is_pointer<T>>,
-				int> = 0>
+		template <class T, std::enable_if_t<std::negation_v<std::is_pointer<T>>, int> = 0>
 		inline bool WriteRecord(std::uint32_t a_type, std::uint32_t a_version, const T& a_buf) const
 		{
 			return WriteRecord(a_type, a_version, std::addressof(a_buf), sizeof(T));
 		}
 
-		template <
-			class T,
-			std::size_t N,
-			std::enable_if_t<
-				std::is_array_v<T>,
-				int> = 0>
+		template <class T, std::size_t N, std::enable_if_t<std::is_array_v<T>, int> = 0>
 		inline bool WriteRecord(std::uint32_t a_type, std::uint32_t a_version, const T (&a_buf)[N]) const
 		{
 			return WriteRecord(a_type, a_version, std::addressof(a_buf), sizeof(T) * N);
@@ -125,53 +115,59 @@ namespace SKSE
 		[[nodiscard]] bool OpenRecord(std::uint32_t a_type, std::uint32_t a_version) const;
 
 		bool WriteRecordData(const void* a_buf, std::uint32_t a_length) const;
+		bool WriteRecordDataEx(std::uint32_t& a_diff, const void* a_buf, std::uint32_t a_length) const;
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::negation_v<
-					std::is_pointer<T>>,
-				int> = 0>
-		inline bool WriteRecordData(const T& a_buf) const
+		template <class T, std::enable_if_t<std::negation_v<std::is_pointer<T>>, int> = 0>
+		bool WriteRecordData(const T& a_buf) const
 		{
 			return WriteRecordData(std::addressof(a_buf), sizeof(T));
 		}
 
-		template <
-			class T,
-			std::size_t N,
-			std::enable_if_t<
-				std::is_array_v<T>,
-				int> = 0>
-		inline bool WriteRecordData(const T (&a_buf)[N]) const
+		template <class T, std::enable_if_t<std::negation_v<std::is_pointer<T>>, int> = 0>
+		bool WriteRecordDataEx(std::uint32_t& a_diff, const T& a_buf) const
+		{
+			return WriteRecordDataEx(a_diff, std::addressof(a_buf), sizeof(T));
+		}
+
+		template <class T, std::size_t N, std::enable_if_t<std::is_array_v<T>, int> = 0>
+		bool WriteRecordData(const T (&a_buf)[N]) const
 		{
 			return WriteRecordData(std::addressof(a_buf), sizeof(T) * N);
+		}
+
+		template <class T, std::size_t N, std::enable_if_t<std::is_array_v<T>, int> = 0>
+		bool WriteRecordDataEx(std::uint32_t& a_diff, const T (&a_buf)[N]) const
+		{
+			return WriteRecordDataEx(a_diff, std::addressof(a_buf), sizeof(T) * N);
 		}
 
 		bool GetNextRecordInfo(std::uint32_t& a_type, std::uint32_t& a_version, std::uint32_t& a_length) const;
 
 		std::uint32_t ReadRecordData(void* a_buf, std::uint32_t a_length) const;
+		std::uint32_t ReadRecordDataEx(std::uint32_t& a_diff, void* a_buf, std::uint32_t a_length) const;
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::negation_v<
-					std::is_pointer<T>>,
-				int> = 0>
-		inline std::uint32_t ReadRecordData(T& a_buf) const
+		template <class T, std::enable_if_t<std::negation_v<std::is_pointer<T>>, int> = 0>
+		std::uint32_t ReadRecordData(T& a_buf) const
 		{
 			return ReadRecordData(std::addressof(a_buf), sizeof(T));
 		}
 
-		template <
-			class T,
-			std::size_t N,
-			std::enable_if_t<
-				std::is_array_v<T>,
-				int> = 0>
-		inline std::uint32_t ReadRecordData(T (&a_buf)[N]) const
+		template <class T, std::enable_if_t<std::negation_v<std::is_pointer<T>>, int> = 0>
+		std::uint32_t ReadRecordDataEx(std::uint32_t& a_diff, T& a_buf) const
+		{
+			return ReadRecordDataEx(a_diff, std::addressof(a_buf), sizeof(T));
+		}
+
+		template <class T, std::size_t N, std::enable_if_t<std::is_array_v<T>, int> = 0>
+		std::uint32_t ReadRecordData(T (&a_buf)[N]) const
 		{
 			return ReadRecordData(std::addressof(a_buf), sizeof(T) * N);
+		}
+
+		template <class T, std::size_t N, std::enable_if_t<std::is_array_v<T>, int> = 0>
+		std::uint32_t ReadRecordDataEx(std::uint32_t& a_diff, T (&a_buf)[N]) const
+		{
+			return ReadRecordDataEx(a_diff, std::addressof(a_buf), sizeof(T) * N);
 		}
 
 		bool ResolveFormID(RE::FormID a_oldFormID, RE::FormID& a_newFormID) const;
@@ -369,8 +365,41 @@ namespace SKSE
 			kVersion = 1,
 		};
 
-		constexpr void AuthorEmail(std::string_view a_email) noexcept { SetCharBuffer(a_email, std::span{ supportEmail }); }
+		enum
+		{
+			kVersionIndependent_AddressLibraryPostAE = 1 << 0,
+			kVersionIndependent_Signatures = 1 << 1,
+			kVersionIndependent_StructsPost629 = 1 << 2,
+		};
+
+		enum
+		{
+			kVersionIndependentEx_NoStructUse = 1 << 0,
+		};
+
+		constexpr void PluginVersion(REL::Version a_version) noexcept { pluginVersion = a_version.pack(); }
+
+		[[nodiscard]] constexpr REL::Version GetPluginVersion() const noexcept { return REL::Version::unpack(pluginVersion); }
+
+		constexpr void PluginName(std::string_view a_plugin) noexcept { SetCharBuffer(a_plugin, std::span{ pluginName }); }
+
+		[[nodiscard]] constexpr std::string_view GetPluginName() const noexcept { return std::string_view{ pluginName }; }
+
 		constexpr void AuthorName(std::string_view a_name) noexcept { SetCharBuffer(a_name, std::span{ author }); }
+
+		[[nodiscard]] constexpr std::string_view GetAuthorName() const noexcept { return std::string_view{ author }; }
+
+		constexpr void AuthorEmail(std::string_view a_email) noexcept { SetCharBuffer(a_email, std::span{ supportEmail }); }
+
+		[[nodiscard]] constexpr std::string_view GetAuthorEmail() const noexcept { return std::string_view{ supportEmail }; }
+
+		constexpr void UsesAddressLibrary() noexcept { versionIndependence |= kVersionIndependent_AddressLibraryPostAE; }
+		constexpr void UsesSigScanning() noexcept { versionIndependence |= kVersionIndependent_Signatures; }
+		constexpr void UsesUpdatedStructs() noexcept { versionIndependence |= kVersionIndependent_StructsPost629; }
+
+		constexpr void UsesNoStructs() noexcept { versionIndependenceEx |= kVersionIndependentEx_NoStructUse; }
+
+		constexpr void MinimumRequiredXSEVersion(REL::Version a_version) noexcept { xseMinimum = a_version.pack(); }
 
 		constexpr void CompatibleVersions(std::initializer_list<REL::Version> a_versions) noexcept
 		{
@@ -382,30 +411,15 @@ namespace SKSE
 				[](const REL::Version& a_version) noexcept { return a_version.pack(); });
 		}
 
-		constexpr void MinimumRequiredXSEVersion(REL::Version a_version) noexcept { xseMinimum = a_version.pack(); }
-		constexpr void PluginName(std::string_view a_plugin) noexcept { SetCharBuffer(a_plugin, std::span{ pluginName }); }
-		constexpr void PluginVersion(REL::Version a_version) noexcept { pluginVersion = a_version.pack(); }
-		constexpr void HasNoStructUse(bool a_value = true) noexcept { noStructUse = a_value; }
-		constexpr void UsesNoStructs(bool a_value = true) noexcept { noStructUse = a_value; }
-		constexpr void UsesAddressLibrary(bool a_value = true) noexcept { addressLibrary = a_value; }
-		constexpr void UsesSigScanning(bool a_value = true) noexcept { sigScanning = a_value; }
-		constexpr void UsesStructsPost629(bool a_value = true) noexcept { structsPost629 = a_value; }
+		[[nodiscard]] static const PluginVersionData* GetSingleton() noexcept;
 
 		const std::uint32_t dataVersion{ kVersion };
 		std::uint32_t       pluginVersion = 0;
 		char                pluginName[256] = {};
 		char                author[256] = {};
 		char                supportEmail[252] = {};
-		bool                noStructUse : 1 = false;
-		std::uint8_t        padding1 : 7 = 0;
-		std::uint8_t        padding2 = 0;
-		std::uint16_t       padding3 = 0;
-		bool                addressLibrary: 1 = false;
-		bool                sigScanning: 1 = false;
-		bool                structsPost629 : 1 = false;
-		std::uint8_t        padding4: 5 = 0;
-		std::uint8_t        padding5 = 0;
-		std::uint16_t       padding6 = 0;
+		std::uint32_t       versionIndependenceEx = 0;
+		std::uint32_t       versionIndependence = 0;
 		std::uint32_t       compatibleVersions[16] = {};
 		std::uint32_t       xseMinimum = 0;
 
@@ -424,10 +438,8 @@ namespace SKSE
 	static_assert(offsetof(PluginVersionData, pluginName) == 0x008);
 	static_assert(offsetof(PluginVersionData, author) == 0x108);
 	static_assert(offsetof(PluginVersionData, supportEmail) == 0x208);
-	static_assert(offsetof(PluginVersionData, padding2) == 0x305);
-	static_assert(offsetof(PluginVersionData, padding3) == 0x306);
-	static_assert(offsetof(PluginVersionData, padding5) == 0x309);
-	static_assert(offsetof(PluginVersionData, padding6) == 0x30A);
+	static_assert(offsetof(PluginVersionData, versionIndependenceEx) == 0x304);
+	static_assert(offsetof(PluginVersionData, versionIndependence) == 0x308);
 	static_assert(offsetof(PluginVersionData, compatibleVersions) == 0x30C);
 	static_assert(offsetof(PluginVersionData, xseMinimum) == 0x34C);
 	static_assert(sizeof(PluginVersionData) == 0x350);
@@ -562,9 +574,9 @@ namespace SKSE
 			}
 
 		private:
-			const bool                           _addressLibrary : 1 = true;
+			const bool                           _addressLibrary: 1 = true;
 			const bool                           _signatureScanning: 1 = false;
-			const bool                           _structsPost629 : 1 = false;
+			const bool                           _structsPost629: 1 = false;
 			[[maybe_unused]] const std::uint8_t  _pad0: 5 = 0;
 			[[maybe_unused]] const std::uint8_t  _pad1{ 0 };
 			[[maybe_unused]] const std::uint16_t _pad2{ 0 };
@@ -604,7 +616,7 @@ namespace SKSE
 			 * both struct layouts in a single plugin. If your plugin has any RE'd structs that have
 			 * changed you should override this.
 			 */
-			const StructCompatibility StructCompatibility{StructCompatibility::Independent};
+			const StructCompatibility StructCompatibility{ StructCompatibility::Independent };
 
 			/**
 		     * A definition of the runtime compatibility for the plugin.
@@ -693,3 +705,4 @@ namespace SKSE
 	}
 
 #define SKSEPluginLoad(...) extern "C" [[maybe_unused]] __declspec(dllexport) bool SKSEPlugin_Load(__VA_ARGS__)
+#define SKSEPluginVersion extern "C" [[maybe_unused]] __declspec(dllexport) constinit SKSE::PluginVersionData SKSEPlugin_Version

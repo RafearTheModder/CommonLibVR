@@ -35,8 +35,8 @@ namespace RE
 	std::uint32_t                           handleCount;            /* C0 */                  \
 	std::int32_t                            unkC4;                  /* C4 */                  \
 	NiPointer<Actor>                        cachedAttacker;         /* C8 - attackerHandle */ \
-	NiPointer<Actor>                        cachedTarget;           /* D0 - targetHandle */   
-	RUNTIME_DATA_CONTENT
+	NiPointer<Actor>                        cachedTarget;           /* D0 - targetHandle */
+            RUNTIME_DATA_CONTENT
 		};
 
 		// 629 and later
@@ -70,7 +70,7 @@ namespace RE
 
 		[[nodiscard]] inline const AE_RUNTIME_DATA& GetAERuntimeData() const noexcept
 		{
-			return this->GetAERuntimeData();
+			return *const_cast<CombatController*>(this)->GetAERuntimeData();
 		}
 
 		[[nodiscard]] bool IsFleeing() const
@@ -99,7 +99,7 @@ namespace RE
 		AITimer                        unk44;                 // 44
 		float                          lowMovementDelta;      // 4C
 		BSTArray<CombatAimController*> aimControllers;        // 50
-#if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
+#if defined(EXCLUSIVE_SKYRIM_AE)
 		AE_RUNTIME_DATA_CONTENT;
 #endif
 		RUNTIME_DATA_CONTENT;
@@ -107,9 +107,12 @@ namespace RE
 	private:
 		KEEP_FOR_RE()
 	};
-#if defined(ENABLE_SKYRIM_AE) && !(defined(ENABLE_SKYRIM_SE) || defined(ENABLE_SKYRIM_VR))
+#if defined(EXCLUSIVE_SKYRIM_AE)
 	static_assert(sizeof(CombatController) == 0xE0);
 #else
 	static_assert(sizeof(CombatController) == 0xD8);
 #endif
 }
+
+#undef RUNTIME_DATA_CONTENT
+#undef AE_RUNTIME_DATA_CONTENT

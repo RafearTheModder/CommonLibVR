@@ -114,7 +114,7 @@ namespace RE
 		public BSTEventSource<TESUniqueIDChangeEvent>,           // 10D8
 		public BSTEventSource<TESWaitStartEvent>,                // 1130 - ?
 		public BSTEventSource<TESWaitStopEvent>,                 // 1188 - ?
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 		public BSTEventSource<TESSwitchRaceCompleteEvent>,  // 11E0
 		public BSTEventSource<TESFastTravelEndEvent>        // 1238
 #else
@@ -124,7 +124,7 @@ namespace RE
 	public:
 		static ScriptEventSourceHolder* GetSingleton();
 
-		void SendActivateEvent(const NiPointer<TESObjectREFR>& a_objectActivated, const NiPointer<TESObjectREFR>& a_actionRef); // may be VR only
+		void SendActivateEvent(const NiPointer<TESObjectREFR>& a_objectActivated, const NiPointer<TESObjectREFR>& a_actionRef);  // may be VR only
 		void SendOpenCloseEvent(const NiPointer<TESObjectREFR>& a_ref, const NiPointer<TESObjectREFR>& a_activeRef, bool a_isOpened);
 		void SendSpellCastEvent(const NiPointer<TESObjectREFR>& a_object, FormID a_formID);
 
@@ -156,6 +156,12 @@ namespace RE
 		}
 
 		template <class T>
+		inline void PrependEventSink(BSTEventSink<T>* a_sink)
+		{
+			GetEventSource<T>()->PrependEventSink(a_sink);
+		}
+
+		template <class T>
 		inline void RemoveEventSink(BSTEventSink<T>* a_sink)
 		{
 			GetEventSource<T>()->RemoveEventSink(a_sink);
@@ -170,9 +176,9 @@ namespace RE
 	private:
 		KEEP_FOR_RE()
 	};
-#if !defined(ENABLE_SKYRIM_VR)
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 	static_assert(sizeof(ScriptEventSourceHolder) == 0x1290);
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
+#elif defined(EXCLUSIVE_SKYRIM_VR)
 	static_assert(sizeof(ScriptEventSourceHolder) == 0x1238);
 #endif
 }

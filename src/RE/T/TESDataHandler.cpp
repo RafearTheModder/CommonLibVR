@@ -11,7 +11,7 @@ namespace RE
 
 	TESDataHandler* TESDataHandler::GetSingleton(bool a_VRESL)
 	{
-		REL::Relocation<TESDataHandler**> singleton{ Offset::TESDataHandler::Singleton };
+		static REL::Relocation<TESDataHandler**> singleton{ RELOCATION_ID(514141, 400269) };
 		if (REL::Module::IsVR() && a_VRESL && !VRcompiledFileCollection) {
 			const auto VRhandle = REX::W32::GetModuleHandleW(L"skyrimvresl");
 			if (VRhandle != NULL) {
@@ -27,14 +27,14 @@ namespace RE
 	bool TESDataHandler::AddFormToDataHandler(TESForm* a_form)
 	{
 		using func_t = decltype(&TESDataHandler::AddFormToDataHandler);
-		REL::Relocation<func_t> func{ RELOCATION_ID(13597, 13693) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13597, 13693) };
 		return func(this, a_form);
 	}
 
 	std::uint32_t TESDataHandler::LoadScripts()
 	{
 		using func_t = decltype(&TESDataHandler::LoadScripts);
-		REL::Relocation<func_t> func{ Offset::TESDataHandler::LoadScripts };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13657, 13766) };
 		return func(this);
 	}
 
@@ -180,9 +180,23 @@ namespace RE
 		return mod ? std::make_optional(mod->smallFileCompileIndex) : std::nullopt;
 	}
 
+	TESWorldSpace* TESDataHandler::GetExtCellDataFromFileByEditorID(const char* a_cellID, std::int32_t& a_outX, std::int32_t& a_outY)
+	{
+		using func_t = decltype(&TESDataHandler::GetExtCellDataFromFileByEditorID);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13618, 13716) };
+		return func(this, a_cellID, a_outX, a_outY);
+	}
+
 	bool TESDataHandler::IsGeneratedID(FormID a_formID)
 	{
 		return a_formID >= 0xFF000000;
+	}
+
+	FormID TESDataHandler::GetNextID()
+	{
+		using func_t = decltype(&TESDataHandler::GetNextID);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13635, 13740) };
+		return func(this);
 	}
 
 	BSTArray<TESForm*>& TESDataHandler::GetFormArray(FormType a_formType)
@@ -193,7 +207,7 @@ namespace RE
 	ObjectRefHandle TESDataHandler::CreateReferenceAtLocation(TESBoundObject* a_base, const NiPoint3& a_location, const NiPoint3& a_rotation, TESObjectCELL* a_targetCell, TESWorldSpace* a_selfWorldSpace, TESObjectREFR* a_alreadyCreatedRef, BGSPrimitive* a_primitive, const ObjectRefHandle& a_linkedRoomRefHandle, bool a_forcePersist, bool a_arg11)
 	{
 		using func_t = decltype(&TESDataHandler::CreateReferenceAtLocation);
-		REL::Relocation<func_t> func{ RELOCATION_ID(13625, 13723) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(13625, 13723) };
 		return func(this, a_base, a_location, a_rotation, a_targetCell, a_selfWorldSpace, a_alreadyCreatedRef, a_primitive, a_linkedRoomRefHandle, a_forcePersist, a_arg11);
 	}
 }

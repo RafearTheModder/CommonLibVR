@@ -18,6 +18,7 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto      RTTI = RTTI_CursorMenu;
+		inline static constexpr auto      VTABLE = VTABLE_CursorMenu;
 		constexpr static std::string_view MENU_NAME = "Cursor Menu";
 
 		~CursorMenu() override;  // 00
@@ -45,13 +46,11 @@ namespace RE
 	private:
 		KEEP_FOR_RE()
 	};
-#if !defined(ENABLE_SKYRIM_VR)
-#	ifdef ENABLE_SKYRIM_AE
-	static_assert(sizeof(CursorMenu) == 0x50);
-#	else
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
 	static_assert(sizeof(CursorMenu) == 0x40);
-#	endif
-#elif !defined(ENABLE_SKYRIM_AE) && !defined(ENABLE_SKYRIM_SE)
-static_assert(sizeof(CursorMenu) == 0x50);
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+	static_assert(sizeof(CursorMenu) == 0x50);
+#else
+	static_assert(sizeof(CursorMenu) == 0x30);
 #endif
 }

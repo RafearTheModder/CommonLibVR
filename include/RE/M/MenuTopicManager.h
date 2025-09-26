@@ -26,6 +26,7 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_MenuTopicManager;
+		inline static constexpr auto VTABLE = VTABLE_MenuTopicManager;
 
 		struct Dialogue
 		{
@@ -60,8 +61,13 @@ namespace RE
 
 		static MenuTopicManager* GetSingleton()
 		{
-			REL::Relocation<MenuTopicManager**> singleton{ RELOCATION_ID(514959, 401099) };
+			static REL::Relocation<MenuTopicManager**> singleton{ RELOCATION_ID(514959, 401099) };
 			return *singleton;
+		}
+
+		bool IsCurrentSpeaker(const ObjectRefHandle& a_handle) const
+		{
+			return menuOpen && speaker == a_handle;
 		}
 
 		// members
@@ -78,7 +84,7 @@ namespace RE
 		BSTArray<BGSDialogueBranch*>   blockingBranches;      // 80
 		BSTArray<BGSDialogueBranch*>   topLevelBranches;      // 98
 		bool                           isGreetingPlayer;      // B0
-		bool                           unkB1;                 // B1
+		bool                           menuOpen;              // B1
 		bool                           isSayingGoodbye;       // B2
 		bool                           unkB3;                 // B3
 		bool                           unkB4;                 // B4

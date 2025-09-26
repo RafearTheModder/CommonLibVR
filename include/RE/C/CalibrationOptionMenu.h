@@ -1,7 +1,7 @@
 #pragma once
-
-#include "RE/I/IMenu.h"
-#include "RE/M/MenuEventHandler.h"
+#ifdef ENABLE_SKYRIM_VR
+#	include "RE/I/IMenu.h"
+#	include "RE/M/MenuEventHandler.h"
 
 namespace RE
 {
@@ -11,6 +11,8 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_CalibrationOptionMenu;
+
+		using MenuEventHandler::operator delete;
 
 		// override (IMenu)
 		void               Accept(CallbackProcessor* a_processor) override;  // 01
@@ -25,6 +27,10 @@ namespace RE
 	private:
 		KEEP_FOR_RE()
 	};
+#	if defined(EXCLUSIVE_SKYRIM_VR)
 	static_assert(sizeof(CalibrationOptionMenu) == 0x58);
-
+#	else
+	static_assert(sizeof(CalibrationOptionMenu) == 0x48);
+#	endif
 }
+#endif

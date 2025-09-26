@@ -13,6 +13,7 @@ namespace RE
 	class BSOcclusionPlane;
 	class BSPortalGraphEntry;
 	class BSShaderAccumulator;
+	class NiAVObject;
 	class NiBound;
 	class NiFrustumPlanes;
 
@@ -45,7 +46,8 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_BSCullingProcess;
-		inline static auto           Ni_RTTI = NiRTTI_BSCullingProcess;
+		inline static constexpr auto Ni_RTTI = NiRTTI_BSCullingProcess;
+		inline static constexpr auto VTABLE = VTABLE_BSCullingProcess;
 
 		enum class BSCPCullingType
 		{

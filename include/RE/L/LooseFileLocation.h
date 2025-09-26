@@ -25,6 +25,7 @@ namespace RE
 		{
 		public:
 			inline static constexpr auto RTTI = RTTI_BSResource__LooseFileLocation;
+			inline static constexpr auto VTABLE = VTABLE_BSResource__LooseFileLocation;
 
 			~LooseFileLocation() override;  // 00
 
@@ -48,7 +49,7 @@ namespace RE
 				auto memory = malloc<LooseFileLocation>();
 				std::memset(memory, 0, sizeof(LooseFileLocation));
 
-				REL::Relocation<std::uintptr_t> vtbl{ RELOCATION_ID(232012, 188191) };
+				static REL::Relocation<std::uintptr_t> vtbl{ RELOCATION_ID(232012, 188191) };
 				((std::uintptr_t*)memory)[0] = vtbl.address();
 
 				memory->prefix = a_prefix;

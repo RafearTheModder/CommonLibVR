@@ -30,7 +30,8 @@ namespace RE
 	{
 	public:
 		inline static constexpr auto RTTI = RTTI_ExtraFollowerSwimBreadcrumbs;
-		inline static auto           EXTRADATATYPE = ExtraDataType::kFollowerSwimBreadcrumbs;
+		inline static constexpr auto VTABLE = VTABLE_ExtraFollowerSwimBreadcrumbs;
+		inline static constexpr auto EXTRADATATYPE = ExtraDataType::kFollowerSwimBreadcrumbs;
 
 		~ExtraFollowerSwimBreadcrumbs() override;  // 00
 
@@ -38,11 +39,11 @@ namespace RE
 		ExtraDataType GetType() const override;  // 01 - { return kFollowerSwimBreadcrumbs; }
 
 		// members
-		stl::enumeration<BREADCRUMB_STATE, std::uint32_t> leaderState;      // 10
-		NiPoint3                                          leaderLocation;   // 14
-		std::uint32_t                                     leaderNavMeshID;  // 20
-		std::uint32_t                                     pad24;            // 24
-		BSSimpleList<ExtraFollowerSwimBreadcrumb*>        crumbs;           // 28
+		REX::EnumSet<BREADCRUMB_STATE, std::uint32_t> leaderState;      // 10
+		NiPoint3                                      leaderLocation;   // 14
+		std::uint32_t                                 leaderNavMeshID;  // 20
+		std::uint32_t                                 pad24;            // 24
+		BSSimpleList<ExtraFollowerSwimBreadcrumb*>    crumbs;           // 28
 	private:
 		KEEP_FOR_RE()
 	};
